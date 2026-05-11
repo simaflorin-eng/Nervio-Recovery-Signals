@@ -24,6 +24,12 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		86C7BD4E2FB26AA80027212B /* ro */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ro; path = Localizable.strings; sourceTree = "<group>"; };
+		86C7BD502FB26AEB0027212B /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = Localizable.strings; sourceTree = "<group>"; };
+		86C7BD522FB26B310027212B /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = Localizable.strings; sourceTree = "<group>"; };
+		86C7BD542FB26B5D0027212B /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = Localizable.strings; sourceTree = "<group>"; };
+		86C7BD562FB26B890027212B /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = Localizable.strings; sourceTree = "<group>"; };
+		86C7BD582FB26BB30027212B /* pt */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pt; path = Localizable.strings; sourceTree = "<group>"; };
 		86E4560E2FB236C800040516 /* Nervio — Recovery Signals.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Nervio — Recovery Signals.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		86E4561B2FB236C900040516 /* Nervio — Recovery SignalsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Nervio — Recovery SignalsTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		86E456252FB236C900040516 /* Nervio — Recovery SignalsUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Nervio — Recovery SignalsUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -35,8 +41,14 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				App/NervioAppModel.swift,
+				de.lproj/Localizable.strings,
+				es.lproj/Localizable.strings,
+				fr.lproj/Localizable.strings,
 				Health/HealthKitManager.swift,
+				it.lproj/Localizable.strings,
 				Models/RecoveryModels.swift,
+				pt.lproj/Localizable.strings,
+				ro.lproj/Localizable.strings,
 				Scoring/BaselineCalculator.swift,
 				Scoring/RecoveryScoreEngine.swift,
 				Views/DashboardView.swift,
@@ -95,6 +107,54 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		86C7BD452FB26A670027212B /* ro.lproj */ = {
+			isa = PBXGroup;
+			children = (
+				86C7BD4D2FB26AA80027212B /* Localizable.strings */,
+			);
+			path = ro.lproj;
+			sourceTree = "<group>";
+		};
+		86C7BD462FB26A670027212B /* fr.lproj */ = {
+			isa = PBXGroup;
+			children = (
+				86C7BD4F2FB26AEB0027212B /* Localizable.strings */,
+			);
+			path = fr.lproj;
+			sourceTree = "<group>";
+		};
+		86C7BD472FB26A670027212B /* de.lproj */ = {
+			isa = PBXGroup;
+			children = (
+				86C7BD512FB26B310027212B /* Localizable.strings */,
+			);
+			path = de.lproj;
+			sourceTree = "<group>";
+		};
+		86C7BD482FB26A670027212B /* es.lproj */ = {
+			isa = PBXGroup;
+			children = (
+				86C7BD532FB26B5D0027212B /* Localizable.strings */,
+			);
+			path = es.lproj;
+			sourceTree = "<group>";
+		};
+		86C7BD492FB26A670027212B /* it.lproj */ = {
+			isa = PBXGroup;
+			children = (
+				86C7BD552FB26B890027212B /* Localizable.strings */,
+			);
+			path = it.lproj;
+			sourceTree = "<group>";
+		};
+		86C7BD4A2FB26A670027212B /* pt.lproj */ = {
+			isa = PBXGroup;
+			children = (
+				86C7BD572FB26BB30027212B /* Localizable.strings */,
+			);
+			path = pt.lproj;
+			sourceTree = "<group>";
+		};
 		86E456052FB236C800040516 = {
 			isa = PBXGroup;
 			children = (
@@ -108,6 +168,12 @@
 				86E4563B2FB2371A00040516 /* Scoring */,
 				86E4563C2FB2371A00040516 /* Views */,
 				86E456472FB2383500040516 /* Nervio.entitlements */,
+				86C7BD452FB26A670027212B /* ro.lproj */,
+				86C7BD462FB26A670027212B /* fr.lproj */,
+				86C7BD472FB26A670027212B /* de.lproj */,
+				86C7BD482FB26A670027212B /* es.lproj */,
+				86C7BD492FB26A670027212B /* it.lproj */,
+				86C7BD4A2FB26A670027212B /* pt.lproj */,
 			);
 			sourceTree = "<group>";
 		};
@@ -256,6 +322,12 @@
 			knownRegions = (
 				en,
 				Base,
+				ro,
+				fr,
+				de,
+				es,
+				it,
+				pt,
 			);
 			mainGroup = 86E456052FB236C800040516;
 			minimizedProjectReferenceProxies = 1;
@@ -331,6 +403,57 @@
 			targetProxy = 86E456262FB236C900040516 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		86C7BD4D2FB26AA80027212B /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				86C7BD4E2FB26AA80027212B /* ro */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
+		86C7BD4F2FB26AEB0027212B /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				86C7BD502FB26AEB0027212B /* fr */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
+		86C7BD512FB26B310027212B /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				86C7BD522FB26B310027212B /* de */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
+		86C7BD532FB26B5D0027212B /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				86C7BD542FB26B5D0027212B /* es */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
+		86C7BD552FB26B890027212B /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				86C7BD562FB26B890027212B /* it */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
+		86C7BD572FB26BB30027212B /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				86C7BD582FB26BB30027212B /* pt */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		86E4562D2FB236C900040516 /* Debug */ = {
