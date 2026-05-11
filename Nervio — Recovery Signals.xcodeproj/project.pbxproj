@@ -1,0 +1,651 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXContainerItemProxy section */
+		86E4561C2FB236C900040516 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 86E456062FB236C800040516 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 86E4560D2FB236C800040516;
+			remoteInfo = "Nervio — Recovery Signals";
+		};
+		86E456262FB236C900040516 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 86E456062FB236C800040516 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 86E4560D2FB236C800040516;
+			remoteInfo = "Nervio — Recovery Signals";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		86E4560E2FB236C800040516 /* Nervio — Recovery Signals.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Nervio — Recovery Signals.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		86E4561B2FB236C900040516 /* Nervio — Recovery SignalsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Nervio — Recovery SignalsTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		86E456252FB236C900040516 /* Nervio — Recovery SignalsUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Nervio — Recovery SignalsUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		86E456472FB2383500040516 /* Nervio.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Nervio.entitlements; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		86E4564D2FB2386400040516 /* Exceptions for "Nervio — Recovery Signals" folder in "Nervio — Recovery Signals" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				App/NervioAppModel.swift,
+				Health/HealthKitManager.swift,
+				Models/RecoveryModels.swift,
+				Scoring/BaselineCalculator.swift,
+				Scoring/RecoveryScoreEngine.swift,
+				Views/DashboardView.swift,
+				Views/MainTabView.swift,
+				Views/OnboardingView.swift,
+				Views/PrivacySettingsView.swift,
+				Views/TrendsView.swift,
+			);
+			target = 86E4560D2FB236C800040516 /* Nervio — Recovery Signals */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		86E456102FB236C800040516 /* Nervio — Recovery Signals */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				86E4564D2FB2386400040516 /* Exceptions for "Nervio — Recovery Signals" folder in "Nervio — Recovery Signals" target */,
+			);
+			path = "Nervio — Recovery Signals";
+			sourceTree = "<group>";
+		};
+		86E4561E2FB236C900040516 /* Nervio — Recovery SignalsTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "Nervio — Recovery SignalsTests";
+			sourceTree = "<group>";
+		};
+		86E456282FB236C900040516 /* Nervio — Recovery SignalsUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "Nervio — Recovery SignalsUITests";
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		86E4560B2FB236C800040516 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		86E456182FB236C900040516 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		86E456222FB236C900040516 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		86E456052FB236C800040516 = {
+			isa = PBXGroup;
+			children = (
+				86E456102FB236C800040516 /* Nervio — Recovery Signals */,
+				86E4561E2FB236C900040516 /* Nervio — Recovery SignalsTests */,
+				86E456282FB236C900040516 /* Nervio — Recovery SignalsUITests */,
+				86E4560F2FB236C800040516 /* Products */,
+				86E456382FB2371A00040516 /* App */,
+				86E456392FB2371A00040516 /* Health */,
+				86E4563A2FB2371A00040516 /* Models */,
+				86E4563B2FB2371A00040516 /* Scoring */,
+				86E4563C2FB2371A00040516 /* Views */,
+				86E456472FB2383500040516 /* Nervio.entitlements */,
+			);
+			sourceTree = "<group>";
+		};
+		86E4560F2FB236C800040516 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				86E4560E2FB236C800040516 /* Nervio — Recovery Signals.app */,
+				86E4561B2FB236C900040516 /* Nervio — Recovery SignalsTests.xctest */,
+				86E456252FB236C900040516 /* Nervio — Recovery SignalsUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		86E456382FB2371A00040516 /* App */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		86E456392FB2371A00040516 /* Health */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Health;
+			sourceTree = "<group>";
+		};
+		86E4563A2FB2371A00040516 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		86E4563B2FB2371A00040516 /* Scoring */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Scoring;
+			sourceTree = "<group>";
+		};
+		86E4563C2FB2371A00040516 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		86E4560D2FB236C800040516 /* Nervio — Recovery Signals */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 86E4562F2FB236C900040516 /* Build configuration list for PBXNativeTarget "Nervio — Recovery Signals" */;
+			buildPhases = (
+				86E4560A2FB236C800040516 /* Sources */,
+				86E4560B2FB236C800040516 /* Frameworks */,
+				86E4560C2FB236C800040516 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				86E456102FB236C800040516 /* Nervio — Recovery Signals */,
+			);
+			name = "Nervio — Recovery Signals";
+			packageProductDependencies = (
+			);
+			productName = "Nervio — Recovery Signals";
+			productReference = 86E4560E2FB236C800040516 /* Nervio — Recovery Signals.app */;
+			productType = "com.apple.product-type.application";
+		};
+		86E4561A2FB236C900040516 /* Nervio — Recovery SignalsTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 86E456322FB236C900040516 /* Build configuration list for PBXNativeTarget "Nervio — Recovery SignalsTests" */;
+			buildPhases = (
+				86E456172FB236C900040516 /* Sources */,
+				86E456182FB236C900040516 /* Frameworks */,
+				86E456192FB236C900040516 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				86E4561D2FB236C900040516 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				86E4561E2FB236C900040516 /* Nervio — Recovery SignalsTests */,
+			);
+			name = "Nervio — Recovery SignalsTests";
+			packageProductDependencies = (
+			);
+			productName = "Nervio — Recovery SignalsTests";
+			productReference = 86E4561B2FB236C900040516 /* Nervio — Recovery SignalsTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		86E456242FB236C900040516 /* Nervio — Recovery SignalsUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 86E456352FB236C900040516 /* Build configuration list for PBXNativeTarget "Nervio — Recovery SignalsUITests" */;
+			buildPhases = (
+				86E456212FB236C900040516 /* Sources */,
+				86E456222FB236C900040516 /* Frameworks */,
+				86E456232FB236C900040516 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				86E456272FB236C900040516 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				86E456282FB236C900040516 /* Nervio — Recovery SignalsUITests */,
+			);
+			name = "Nervio — Recovery SignalsUITests";
+			packageProductDependencies = (
+			);
+			productName = "Nervio — Recovery SignalsUITests";
+			productReference = 86E456252FB236C900040516 /* Nervio — Recovery SignalsUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		86E456062FB236C800040516 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2640;
+				LastUpgradeCheck = 2640;
+				TargetAttributes = {
+					86E4560D2FB236C800040516 = {
+						CreatedOnToolsVersion = 26.4.1;
+					};
+					86E4561A2FB236C900040516 = {
+						CreatedOnToolsVersion = 26.4.1;
+						TestTargetID = 86E4560D2FB236C800040516;
+					};
+					86E456242FB236C900040516 = {
+						CreatedOnToolsVersion = 26.4.1;
+						TestTargetID = 86E4560D2FB236C800040516;
+					};
+				};
+			};
+			buildConfigurationList = 86E456092FB236C800040516 /* Build configuration list for PBXProject "Nervio — Recovery Signals" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 86E456052FB236C800040516;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 86E4560F2FB236C800040516 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				86E4560D2FB236C800040516 /* Nervio — Recovery Signals */,
+				86E4561A2FB236C900040516 /* Nervio — Recovery SignalsTests */,
+				86E456242FB236C900040516 /* Nervio — Recovery SignalsUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		86E4560C2FB236C800040516 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		86E456192FB236C900040516 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		86E456232FB236C900040516 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		86E4560A2FB236C800040516 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		86E456172FB236C900040516 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		86E456212FB236C900040516 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		86E4561D2FB236C900040516 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 86E4560D2FB236C800040516 /* Nervio — Recovery Signals */;
+			targetProxy = 86E4561C2FB236C900040516 /* PBXContainerItemProxy */;
+		};
+		86E456272FB236C900040516 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 86E4560D2FB236C800040516 /* Nervio — Recovery Signals */;
+			targetProxy = 86E456262FB236C900040516 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		86E4562D2FB236C900040516 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 62QUMB3PNM;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.4;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		86E4562E2FB236C900040516 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 62QUMB3PNM;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.4;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		86E456302FB236C900040516 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "Nervio — Recovery Signals/Nervio — Recovery Signals.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 62QUMB3PNM;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "Nervio reads ​Apple ​Health data locally to estimate recovery signals and physiological load trends.";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.florinsima.Nervio---Recovery-Signals";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		86E456312FB236C900040516 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "Nervio — Recovery Signals/Nervio — Recovery Signals.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 62QUMB3PNM;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "Nervio reads ​Apple ​Health data locally to estimate recovery signals and physiological load trends.";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.florinsima.Nervio---Recovery-Signals";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		86E456332FB236C900040516 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 62QUMB3PNM;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.4;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.florinsima.Nervio---Recovery-SignalsTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Nervio — Recovery Signals.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Nervio — Recovery Signals";
+			};
+			name = Debug;
+		};
+		86E456342FB236C900040516 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 62QUMB3PNM;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.4;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.florinsima.Nervio---Recovery-SignalsTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Nervio — Recovery Signals.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Nervio — Recovery Signals";
+			};
+			name = Release;
+		};
+		86E456362FB236C900040516 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 62QUMB3PNM;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.florinsima.Nervio---Recovery-SignalsUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = "Nervio — Recovery Signals";
+			};
+			name = Debug;
+		};
+		86E456372FB236C900040516 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 62QUMB3PNM;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.florinsima.Nervio---Recovery-SignalsUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = "Nervio — Recovery Signals";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		86E456092FB236C800040516 /* Build configuration list for PBXProject "Nervio — Recovery Signals" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				86E4562D2FB236C900040516 /* Debug */,
+				86E4562E2FB236C900040516 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		86E4562F2FB236C900040516 /* Build configuration list for PBXNativeTarget "Nervio — Recovery Signals" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				86E456302FB236C900040516 /* Debug */,
+				86E456312FB236C900040516 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		86E456322FB236C900040516 /* Build configuration list for PBXNativeTarget "Nervio — Recovery SignalsTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				86E456332FB236C900040516 /* Debug */,
+				86E456342FB236C900040516 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		86E456352FB236C900040516 /* Build configuration list for PBXNativeTarget "Nervio — Recovery SignalsUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				86E456362FB236C900040516 /* Debug */,
+				86E456372FB236C900040516 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 86E456062FB236C800040516 /* Project object */;
+}
