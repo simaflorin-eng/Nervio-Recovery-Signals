@@ -2,14 +2,28 @@ import Charts
 import HealthKit
 import Observation
 import SwiftUI
+import WatchConnectivity
+import WidgetKit
 
 enum L10n {
     static func string(_ key: String) -> String {
-        if let value = inAppTranslation(for: key) {
+        string(key, languageCode: selectedLanguageCode)
+    }
+
+    static func string(_ key: String, languageCode: String) -> String {
+        if languageCode == AppLanguage.en.rawValue {
+            return key
+        }
+
+        if let value = resourceTranslation(for: key, languageCode: languageCode) {
             return value
         }
 
-        if let bundle = selectedLanguageBundle {
+        if let value = inAppTranslation(for: key, languageCode: languageCode) {
+            return value
+        }
+
+        if let bundle = selectedLanguageBundle(languageCode: languageCode) {
             return NSLocalizedString(key, bundle: bundle, comment: "")
         }
 
@@ -17,26 +31,55 @@ enum L10n {
     }
 
     static func format(_ key: String, _ arguments: CVarArg...) -> String {
-        String(format: string(key), locale: .current, arguments: arguments)
+        String(format: string(key), locale: selectedLocale, arguments: arguments)
     }
 
-    private static var selectedLanguageBundle: Bundle? {
-        let code = UserDefaults.standard.string(forKey: "selectedLanguageCode") ?? AppLanguage.system.rawValue
-        guard code != AppLanguage.system.rawValue,
-              let path = Bundle.main.path(forResource: code, ofType: "lproj") else {
+    private static var selectedLanguageCode: String {
+        UserDefaults.standard.string(forKey: "selectedLanguageCode") ?? AppLanguage.system.rawValue
+    }
+
+    private static var selectedLocale: Locale {
+        let code = selectedLanguageCode
+        return code == AppLanguage.system.rawValue ? .current : Locale(identifier: code)
+    }
+
+    private static func selectedLanguageBundle(languageCode: String) -> Bundle? {
+        guard languageCode != AppLanguage.system.rawValue,
+              let path = Bundle.main.path(forResource: languageCode, ofType: "lproj") else {
             return nil
         }
 
         return Bundle(path: path)
     }
 
-    private static func inAppTranslation(for key: String) -> String? {
-        let code = UserDefaults.standard.string(forKey: "selectedLanguageCode") ?? AppLanguage.system.rawValue
-        guard code != AppLanguage.system.rawValue, code != AppLanguage.en.rawValue else {
+    private static func resourceTranslation(for key: String, languageCode: String) -> String? {
+        guard languageCode != AppLanguage.system.rawValue, languageCode != AppLanguage.en.rawValue else {
             return nil
         }
 
-        return inAppTranslations[code]?[key]
+        let candidatePaths = [
+            Bundle.main.path(forResource: "Localizable", ofType: "strings", inDirectory: "\(languageCode).lproj"),
+            Bundle.main.path(forResource: languageCode, ofType: nil, inDirectory: "Localizable.strings")
+        ].compactMap { $0 }
+
+        for path in candidatePaths {
+            guard let table = NSDictionary(contentsOfFile: path) as? [String: String],
+                  let value = table[key] else {
+                continue
+            }
+
+            return value
+        }
+
+        return nil
+    }
+
+    private static func inAppTranslation(for key: String, languageCode: String) -> String? {
+        guard languageCode != AppLanguage.system.rawValue else {
+            return nil
+        }
+
+        return inAppTranslations[languageCode]?[key] ?? supplementalTranslations[languageCode]?[key]
     }
 
     private static let inAppTranslations: [String: [String: String]] = [
@@ -221,6 +264,76 @@ enum L10n {
             "Needs review": "Precisa de revisão"
         ]
     ]
+
+    private static let supplementalTranslations: [String: [String: String]] = [
+        "ro": [
+            "Nervio": "Nervio",
+            "Recovery signal": "Semnal de recuperare",
+            "Unavailable": "Indisponibil",
+            "Supportive": "Favorabil",
+            "Neutral": "Neutru",
+            "Load": "Încărcare",
+            "HRV": "HRV",
+            "ms": "ms",
+            "bpm": "bpm",
+            "hours": "ore",
+            "Date": "Dată",
+            "Recovery and nervous system insights based on available Apple Health data.": "Informații despre recuperare și sistemul nervos bazate pe datele Apple Health disponibile.",
+            "Private by design": "Privat prin proiectare",
+            "Your health data never leaves your iPhone.": "Datele tale de sănătate nu părăsesc niciodată iPhone-ul.",
+            "Read-only Health access": "Acces doar pentru citire la Sănătate",
+            "Nervio reads HRV, resting heart rate, sleep, activity, workouts, and mindful sessions.": "Nervio citește HRV, pulsul în repaus, somnul, activitatea, antrenamentele și sesiunile de mindfulness.",
+            "Transparent signals": "Semnale transparente",
+            "Scores compare today with your own recent baseline and avoid medical conclusions.": "Scorurile compară ziua de azi cu propria ta bază recentă și evită concluziile medicale.",
+            "Loading": "Se încarcă",
+            "Connect Apple Health": "Conectează Apple Health",
+            "Use Preview Data": "Folosește date demonstrative",
+            "Apple Health is unavailable on this device. Preview data is shown in Simulator.": "Apple Health nu este disponibil pe acest dispozitiv. În Simulator sunt afișate date demonstrative.",
+            "Health access was not granted. %@": "Accesul la Sănătate nu a fost acordat. %@",
+            "No Apple Health samples were returned for the selected period. Open the Health app and confirm this iPhone has data for HRV, resting heart rate, sleep, steps, active energy, workouts, or mindful sessions.": "Nu au fost returnate mostre Apple Health pentru perioada selectată. Deschide aplicația Sănătate și confirmă că acest iPhone are date pentru HRV, puls în repaus, somn, pași, energie activă, antrenamente sau sesiuni de mindfulness.",
+            "Apple Health access is connected, but no readable samples were returned yet. Check that individual Health permissions are enabled and that this device has recent Health data.": "Accesul la Apple Health este conectat, dar încă nu au fost returnate mostre lizibile. Verifică dacă permisiunile individuale din Sănătate sunt activate și dacă dispozitivul are date recente de sănătate.",
+            "Nervio could not read Apple Health data. Check Health permissions and try again.": "Nervio nu a putut citi datele Apple Health. Verifică permisiunile din Sănătate și încearcă din nou.",
+            "Missing NSHealthShareUsageDescription in the app target. Add the Health privacy usage description before requesting Apple Health access.": "Lipsește NSHealthShareUsageDescription din targetul aplicației. Adaugă descrierea de confidențialitate pentru Sănătate înainte de a solicita acces la Apple Health.",
+            "Nervio needs at least a week of readable Apple Health history to form a personal baseline.": "Nervio are nevoie de cel puțin o săptămână de istoric Apple Health lizibil pentru a forma o bază personală.",
+            "Nervio needs at least a week of readable Apple Health history to estimate physiological load.": "Nervio are nevoie de cel puțin o săptămână de istoric Apple Health lizibil pentru a estima încărcarea fiziologică.",
+            "Nervio needs several days of Apple Health data before estimating a recovery signal.": "Nervio are nevoie de câteva zile de date Apple Health înainte de a estima un semnal de recuperare.",
+            "Nervio needs several days of Apple Health data before estimating physiological load.": "Nervio are nevoie de câteva zile de date Apple Health înainte de a estima încărcarea fiziologică.",
+            "Above your recent baseline, which may indicate stronger recovery signal.": "Peste baza ta recentă, ceea ce poate indica un semnal de recuperare mai puternic.",
+            "Below your recent baseline, which may indicate higher physiological load.": "Sub baza ta recentă, ceea ce poate indica o încărcare fiziologică mai mare.",
+            "Resting heart rate": "Puls în repaus",
+            "Near or below baseline, supporting today’s recovery signal.": "Aproape de bază sau sub ea, susținând semnalul de recuperare de azi.",
+            "Elevated versus baseline, which may indicate added load.": "Crescut față de bază, ceea ce poate indica încărcare suplimentară.",
+            "Sleep duration and quality are supportive relative to your baseline.": "Durata și calitatea somnului sunt favorabile față de baza ta.",
+            "Sleep appears lighter or shorter than your recent pattern.": "Somnul pare mai superficial sau mai scurt decât tiparul tău recent.",
+            "Activity load is below or near baseline today.": "Încărcarea prin activitate este azi sub bază sau aproape de ea.",
+            "Activity load is higher than baseline today.": "Încărcarea prin activitate este azi peste bază.",
+            "Workouts": "Antrenamente",
+            "Workout duration is not above your recent average.": "Durata antrenamentelor nu este peste media ta recentă.",
+            "Workout duration is above your recent average, adding physiological load.": "Durata antrenamentelor este peste media ta recentă, adăugând încărcare fiziologică.",
+            "Mindful minutes": "Minute de mindfulness",
+            "Mindful sessions may support down-regulation and recovery routines.": "Sesiunile de mindfulness pot susține reglarea și rutinele de recuperare.",
+            "Available Apple Health data suggests a stronger recovery signal today.": "Datele Apple Health disponibile sugerează azi un semnal de recuperare mai puternic.",
+            "Available Apple Health data suggests a steady recovery signal today.": "Datele Apple Health disponibile sugerează azi un semnal de recuperare stabil.",
+            "Available Apple Health data suggests some added physiological load today.": "Datele Apple Health disponibile sugerează azi o încărcare fiziologică suplimentară.",
+            "Available Apple Health data suggests elevated physiological load today.": "Datele Apple Health disponibile sugerează azi o încărcare fiziologică ridicată.",
+            "Available data suggests physiological load may be elevated today.": "Datele disponibile sugerează că încărcarea fiziologică poate fi ridicată azi.",
+            "Available data suggests a moderate physiological load signal today.": "Datele disponibile sugerează azi un semnal moderat de încărcare fiziologică.",
+            "Available data suggests a lower physiological load signal today.": "Datele disponibile sugerează azi un semnal mai scăzut de încărcare fiziologică.",
+            "Available data suggests a very low physiological load signal today.": "Datele disponibile sugerează azi un semnal foarte scăzut de încărcare fiziologică.",
+            "Based on %d baseline days. This is a wellness signal, not a diagnosis or medical conclusion.": "Bazat pe %d zile de referință. Acesta este un semnal de wellness, nu un diagnostic sau o concluzie medicală.",
+            "Higher means available data may indicate more physiological load.": "Un scor mai mare înseamnă că datele disponibile pot indica o încărcare fiziologică mai mare.",
+            "Contributors will appear after Nervio can compare today with your rolling baseline.": "Contribuitorii vor apărea după ce Nervio poate compara ziua de azi cu baza ta mobilă.",
+            "No readable data yet": "Încă nu există date lizibile",
+            "Trends compare available Apple Health samples over time. Missing points usually mean no readable data was available for that day.": "Tendințele compară în timp mostrele Apple Health disponibile. Punctele lipsă înseamnă de obicei că nu au existat date lizibile pentru ziua respectivă.",
+            "On-device only": "Doar pe dispozitiv",
+            "Health data is read locally on this iPhone.": "Datele de sănătate sunt citite local pe acest iPhone.",
+            "No cloud backend": "Fără backend în cloud",
+            "Nervio does not use accounts, Firebase, Supabase, analytics SDKs, or external API calls.": "Nervio nu folosește conturi, Firebase, Supabase, SDK-uri de analytics sau apeluri API externe.",
+            "Read-only": "Doar citire",
+            "Nervio does not write data to Apple Health.": "Nervio nu scrie date în Apple Health.",
+            "Nervio estimates wellness-oriented recovery signals from available Apple Health data. It does not diagnose stress, burnout, illness, or any medical condition.": "Nervio estimează semnale de recuperare orientate spre wellness din datele Apple Health disponibile. Nu diagnostichează stres, epuizare, boală sau vreo afecțiune medicală."
+        ]
+    ]
 }
 
 enum AppLanguage: String, CaseIterable, Identifiable {
@@ -273,6 +386,70 @@ enum AppTheme: String, CaseIterable, Identifiable {
     }
 }
 
+private enum NervioVisuals {
+    static let cornerRadius: CGFloat = 8
+    static let horizontalPadding: CGFloat = 20
+}
+
+private struct NervioBackground: View {
+    @Environment(\.colorScheme) private var colorScheme
+
+    var body: some View {
+        ZStack {
+            LinearGradient(
+                colors: colorScheme == .dark
+                    ? [Color(red: 0.03, green: 0.05, blue: 0.08), Color(red: 0.07, green: 0.09, blue: 0.12), Color(red: 0.02, green: 0.10, blue: 0.10)]
+                    : [Color(red: 0.93, green: 0.98, blue: 0.98), Color(red: 0.98, green: 0.97, blue: 0.94), Color(red: 0.94, green: 0.96, blue: 1.0)],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+            .ignoresSafeArea()
+
+            LinearGradient(
+                colors: [
+                    .teal.opacity(colorScheme == .dark ? 0.20 : 0.14),
+                    .clear,
+                    .pink.opacity(colorScheme == .dark ? 0.12 : 0.09)
+                ],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .ignoresSafeArea()
+        }
+    }
+}
+
+private struct NervioCardBackground: View {
+    let tint: Color
+
+    var body: some View {
+        RoundedRectangle(cornerRadius: NervioVisuals.cornerRadius, style: .continuous)
+            .fill(.thinMaterial)
+            .overlay {
+                RoundedRectangle(cornerRadius: NervioVisuals.cornerRadius, style: .continuous)
+                    .stroke(
+                        LinearGradient(
+                            colors: [Color.white.opacity(0.45), tint.opacity(0.22), Color.primary.opacity(0.08)],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        ),
+                        lineWidth: 1
+                    )
+            }
+            .shadow(color: tint.opacity(0.12), radius: 16, x: 0, y: 10)
+    }
+}
+
+private extension View {
+    func nervioCard(tint: Color = .teal, padding: CGFloat = 16) -> some View {
+        self
+            .padding(padding)
+            .background {
+                NervioCardBackground(tint: tint)
+            }
+    }
+}
+
 struct ContentView: View {
     @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
     @AppStorage("selectedLanguageCode") private var selectedLanguageCode = AppLanguage.system.rawValue
@@ -309,6 +486,9 @@ struct ContentView: View {
         }
         .id(selectedLanguageCode)
         .preferredColorScheme(appTheme.colorScheme)
+        .onChange(of: selectedLanguageCode) {
+            appModel.relocalizeDashboard()
+        }
         .task {
             guard hasCompletedOnboarding else { return }
             await refreshDashboard()
@@ -329,12 +509,17 @@ struct ContentView: View {
 @MainActor
 @Observable
 final class NervioAppModel {
-    var dashboardState: DashboardState = .mock
+    var dashboardState: DashboardState = .mock {
+        didSet {
+            publishWidgetSnapshot()
+        }
+    }
     var isLoading = false
     var errorMessage: String?
 
     private let baselineCalculator = BaselineCalculator()
     private let scoreEngine = RecoveryScoreEngine()
+    private let watchTransfer = NervioWatchTransfer.shared
 
     func loadDashboard(using healthKitManager: HealthKitManager) async {
         isLoading = true
@@ -362,6 +547,62 @@ final class NervioAppModel {
         } catch {
             errorMessage = L10n.string("Nervio could not read Apple Health data. Check Health permissions and try again.")
         }
+    }
+
+    func relocalizeDashboard() {
+        let currentState = dashboardState
+
+        if let today = currentState.today, !currentState.history.isEmpty {
+            let baselineResult = baselineCalculator.baseline(from: currentState.history, before: today.date)
+            let baseline = currentState.baseline.availableMetricCount > 0 ? currentState.baseline : baselineResult.baseline
+            let baselineDays = baselineResult.days
+            dashboardState = DashboardState(
+                today: today,
+                baseline: baseline,
+                score: scoreEngine.score(today: today, baseline: baseline, baselineDays: baselineDays),
+                stressScore: scoreEngine.stressScore(today: today, baseline: baseline, baselineDays: baselineDays),
+                history: currentState.history
+            )
+        } else {
+            dashboardState = DashboardState(
+                today: currentState.today,
+                baseline: currentState.baseline,
+                score: .insufficientData,
+                stressScore: .insufficientData,
+                history: currentState.history
+            )
+        }
+
+        errorMessage = relocalizedErrorMessage(errorMessage)
+    }
+
+    private func publishWidgetSnapshot() {
+        let snapshot = NervioWidgetSnapshot(dashboardState: dashboardState)
+        NervioWidgetSnapshotStore.save(snapshot)
+        watchTransfer.send(snapshot)
+        WidgetCenter.shared.reloadTimelines(ofKind: "nervio_recovery_widget")
+        WidgetCenter.shared.reloadTimelines(ofKind: "nervio_stress_widget")
+        WidgetCenter.shared.reloadTimelines(ofKind: "nervio_signal_widget_v2")
+        WidgetCenter.shared.reloadTimelines(ofKind: "nervio_signal_widget")
+        WidgetCenter.shared.reloadTimelines(ofKind: "nervio_widget")
+    }
+
+    private func relocalizedErrorMessage(_ message: String?) -> String? {
+        guard let message else { return nil }
+
+        let knownMessages = [
+            "No Apple Health samples were returned for the selected period. Open the Health app and confirm this iPhone has data for HRV, resting heart rate, sleep, steps, active energy, workouts, or mindful sessions.",
+            "Apple Health access is connected, but no readable samples were returned yet. Check that individual Health permissions are enabled and that this device has recent Health data.",
+            "Nervio could not read Apple Health data. Check Health permissions and try again."
+        ]
+
+        return knownMessages
+            .first { key in
+                AppLanguage.allCases.contains { language in
+                    L10n.string(key, languageCode: language.rawValue) == message || key == message
+                }
+            }
+            .map { L10n.string($0) } ?? message
     }
 }
 
@@ -410,7 +651,7 @@ final class HealthKitManager {
 
         async let hrvSamples = safeQuantitySamples(identifier: .heartRateVariabilitySDNN, startDate: startDate, endDate: endDate)
         async let restingHeartRateSamples = safeQuantitySamples(identifier: .restingHeartRate, startDate: startDate, endDate: endDate)
-        async let stepSamples = safeQuantitySamples(identifier: .stepCount, startDate: startDate, endDate: endDate)
+        async let stepSamples = safeAppleWatchStepSamples(startDate: startDate, endDate: endDate)
         async let activeEnergySamples = safeQuantitySamples(identifier: .activeEnergyBurned, startDate: startDate, endDate: endDate)
         async let sleepSamples = safeCategorySamples(identifier: .sleepAnalysis, startDate: startDate, endDate: endDate)
         async let mindfulSamples = safeCategorySamples(identifier: .mindfulSession, startDate: startDate, endDate: endDate)
@@ -448,6 +689,19 @@ final class HealthKitManager {
     private func safeQuantitySamples(identifier: HKQuantityTypeIdentifier, startDate: Date, endDate: Date) async -> [HKQuantitySample] {
         do {
             return try await quantitySamples(identifier: identifier, startDate: startDate, endDate: endDate)
+        } catch {
+            return []
+        }
+    }
+
+    private func appleWatchStepSamples(startDate: Date, endDate: Date) async throws -> [HKQuantitySample] {
+        try await quantitySamples(identifier: .stepCount, startDate: startDate, endDate: endDate)
+            .filter { isAppleWatchStepSample($0) }
+    }
+
+    private func safeAppleWatchStepSamples(startDate: Date, endDate: Date) async -> [HKQuantitySample] {
+        do {
+            return try await appleWatchStepSamples(startDate: startDate, endDate: endDate)
         } catch {
             return []
         }
@@ -587,6 +841,20 @@ final class HealthKitManager {
         let sleepValue = HKCategoryValueSleepAnalysis(rawValue: value)
         return sleepValue == .asleepUnspecified || sleepValue == .asleepCore || sleepValue == .asleepDeep || sleepValue == .asleepREM
     }
+
+    private func isAppleWatchStepSample(_ sample: HKQuantitySample) -> Bool {
+        let sourceName = sample.sourceRevision.source.name.lowercased()
+        let productType = sample.sourceRevision.productType?.lowercased() ?? ""
+        let deviceName = sample.device?.name?.lowercased() ?? ""
+        let deviceModel = sample.device?.model?.lowercased() ?? ""
+        let localIdentifier = sample.device?.localIdentifier?.lowercased() ?? ""
+
+        let sourceLooksLikeWatch = sourceName.contains("watch") || productType.contains("watch")
+        let deviceLooksLikeWatch = deviceName.contains("watch") || deviceModel.contains("watch") || localIdentifier.contains("watch")
+        let sourceLooksLikePhone = sourceName.contains("iphone") || productType.contains("iphone") || deviceModel.contains("iphone")
+
+        return (sourceLooksLikeWatch || deviceLooksLikeWatch) && !sourceLooksLikePhone
+    }
 }
 
 struct BaselineCalculator {
@@ -624,6 +892,7 @@ struct BaselineCalculator {
 
 struct RecoveryScoreEngine {
     private let minimumBaselineDays = 7
+    private let activityLoadCalculator = ActivityLoadCalculator()
 
     func score(today: DailyHealthSummary?, baseline: HealthBaseline, baselineDays: Int) -> RecoveryScore {
         guard let today else { return .insufficientData }
@@ -671,6 +940,18 @@ struct RecoveryScoreEngine {
             contributors.append(.init(title: L10n.string("Sleep"), value: sleep.formattedHours, detail: impact >= 0 ? L10n.string("Sleep duration and quality are supportive relative to your baseline.") : L10n.string("Sleep appears lighter or shorter than your recent pattern."), impact: impact, direction: direction(for: impact)))
         }
 
+        if let activityLoad = activityLoadCalculator.result(today: today, baseline: baseline) {
+            let reducedRecovery = hasReducedRecoverySignals(today: today, baseline: baseline)
+            let impact = activityLoad.recoveryImpact(whenCombinedWithReducedRecoverySignals: reducedRecovery)
+            contributors.append(.init(
+                title: L10n.string("Activity Load"),
+                value: activityLoad.label,
+                detail: activityLoad.explanation(hasReducedRecoverySignals: reducedRecovery),
+                impact: impact,
+                direction: direction(for: impact)
+            ))
+        }
+
         if let energy = today.activeEnergyKilocalories, let baselineEnergy = baseline.activeEnergyKilocalories, baselineEnergy > 0 {
             let impact = boundedImpact(-((energy - baselineEnergy) / baselineEnergy) * 22, limit: 12)
             contributors.append(.init(title: L10n.string("Active energy"), value: "\(Int(energy.rounded())) kcal", detail: impact >= 0 ? L10n.string("Activity load is below or near baseline today.") : L10n.string("Activity load is higher than baseline today."), impact: impact, direction: direction(for: impact)))
@@ -700,7 +981,28 @@ struct RecoveryScoreEngine {
             load += max(0, boundedImpact((workout - baselineWorkout) / 10, limit: 8))
         }
 
+        if let activityLoad = activityLoadCalculator.result(today: today, baseline: baseline),
+           hasReducedRecoverySignals(today: today, baseline: baseline) {
+            load += activityLoad.physiologicalLoadImpact
+        }
+
         return load
+    }
+
+    private func hasReducedRecoverySignals(today: DailyHealthSummary, baseline: HealthBaseline) -> Bool {
+        let lowHRV = today.hrvMilliseconds.flatMap { hrv in
+            baseline.hrvMilliseconds.map { baselineHRV in baselineHRV > 0 && hrv < baselineHRV * 0.95 }
+        } ?? false
+
+        let elevatedRestingHeartRate = today.restingHeartRate.flatMap { rhr in
+            baseline.restingHeartRate.map { baselineRHR in baselineRHR > 0 && rhr > baselineRHR * 1.05 }
+        } ?? false
+
+        let poorSleep = today.sleepHours.flatMap { sleep in
+            baseline.sleepHours.map { baselineSleep in baselineSleep > 0 && sleep < baselineSleep * 0.92 }
+        } ?? false || (today.sleepEfficiency ?? 1) < 0.78
+
+        return lowHRV || elevatedRestingHeartRate || poorSleep
     }
 
     private func boundedImpact(_ value: Double, limit: Int) -> Int { min(limit, max(-limit, Int(value.rounded()))) }
@@ -770,6 +1072,131 @@ struct HealthBaseline: Hashable {
     }
 }
 
+struct ActivityLoadResult: Hashable {
+    enum Level: String {
+        case low = "Low"
+        case normal = "Normal"
+        case elevated = "Elevated"
+        case high = "High"
+    }
+
+    let todaySteps: Double
+    let average7DaySteps: Double?
+    let average21DaySteps: Double
+    let ratio: Double
+    let level: Level
+
+    var label: String {
+        L10n.string(level.rawValue)
+    }
+
+    var percentVersusUsual: Int {
+        Int(((ratio - 1) * 100).rounded())
+    }
+
+    var stepsVersusBaselineText: String {
+        if percentVersusUsual == 0 {
+            return L10n.string("Within your usual level")
+        }
+
+        let sign = percentVersusUsual > 0 ? "+" : ""
+        return L10n.format("%@%d%% vs your usual level", sign, percentVersusUsual)
+    }
+
+    var physiologicalLoadImpact: Int {
+        switch level {
+        case .low, .normal: 0
+        case .elevated: 6
+        case .high: 10
+        }
+    }
+
+    func recoveryImpact(whenCombinedWithReducedRecoverySignals reducedRecoverySignals: Bool) -> Int {
+        guard reducedRecoverySignals else { return 0 }
+
+        switch level {
+        case .low, .normal: return 0
+        case .elevated: return -5
+        case .high: return -8
+        }
+    }
+
+    func explanation(hasReducedRecoverySignals: Bool) -> String {
+        switch level {
+        case .low:
+            return L10n.string("Activity load was lower than usual.")
+        case .normal:
+            return L10n.string("Your movement level is within your normal range.")
+        case .elevated:
+            return hasReducedRecoverySignals
+                ? L10n.string("Higher recent activity combined with reduced recovery signals may indicate accumulated physiological load.")
+                : L10n.string("Activity load was higher than usual, without reduced recovery signals.")
+        case .high:
+            return hasReducedRecoverySignals
+                ? L10n.string("High recent activity combined with reduced recovery signals may indicate accumulated fatigue.")
+                : L10n.string("Activity load was much higher than usual, but is not reducing recovery by itself.")
+        }
+    }
+}
+
+struct ActivityLoadCalculator {
+    func result(today: DailyHealthSummary?, baseline: HealthBaseline) -> ActivityLoadResult? {
+        guard let today,
+              let todaySteps = today.stepCount,
+              let average21DaySteps = baseline.stepCount,
+              average21DaySteps > 0 else {
+            return nil
+        }
+
+        return result(todaySteps: todaySteps, average7DaySteps: nil, average21DaySteps: average21DaySteps)
+    }
+
+    func result(from summaries: [DailyHealthSummary]) -> ActivityLoadResult? {
+        guard let today = summaries.last,
+              let todaySteps = today.stepCount else {
+            return nil
+        }
+
+        let previousDays = Array(summaries.dropLast().reversed())
+        let average7DaySteps = average(previousDays.prefix(7).compactMap(\.stepCount))
+        guard let average21DaySteps = average(previousDays.prefix(21).compactMap(\.stepCount)),
+              average21DaySteps > 0 else {
+            return nil
+        }
+
+        return result(todaySteps: todaySteps, average7DaySteps: average7DaySteps, average21DaySteps: average21DaySteps)
+    }
+
+    private func result(todaySteps: Double, average7DaySteps: Double?, average21DaySteps: Double) -> ActivityLoadResult {
+        let ratio = todaySteps / average21DaySteps
+        let level: ActivityLoadResult.Level
+
+        switch ratio {
+        case ..<0.5:
+            level = .low
+        case 0.5..<1.3:
+            level = .normal
+        case 1.3...1.7:
+            level = .elevated
+        default:
+            level = .high
+        }
+
+        return ActivityLoadResult(
+            todaySteps: todaySteps,
+            average7DaySteps: average7DaySteps,
+            average21DaySteps: average21DaySteps,
+            ratio: ratio,
+            level: level
+        )
+    }
+
+    private func average(_ values: [Double]) -> Double? {
+        guard !values.isEmpty else { return nil }
+        return values.reduce(0, +) / Double(values.count)
+    }
+}
+
 struct RecoveryContributor: Identifiable, Hashable {
     enum Direction: String {
         case supportive = "Supportive"
@@ -806,7 +1233,9 @@ struct RecoveryScore: Hashable {
     let contributors: [RecoveryContributor]
     let baselineDays: Int
 
-    static let insufficientData = RecoveryScore(value: nil, status: .insufficientData, summary: L10n.string("Nervio needs several days of Apple Health data before estimating a recovery signal."), contributors: [], baselineDays: 0)
+    static var insufficientData: RecoveryScore {
+        RecoveryScore(value: nil, status: .insufficientData, summary: L10n.string("Nervio needs several days of Apple Health data before estimating a recovery signal."), contributors: [], baselineDays: 0)
+    }
 }
 
 struct StressScore: Hashable {
@@ -814,7 +1243,9 @@ struct StressScore: Hashable {
     let summary: String
     let baselineDays: Int
 
-    static let insufficientData = StressScore(value: nil, summary: L10n.string("Nervio needs several days of Apple Health data before estimating physiological load."), baselineDays: 0)
+    static var insufficientData: StressScore {
+        StressScore(value: nil, summary: L10n.string("Nervio needs several days of Apple Health data before estimating physiological load."), baselineDays: 0)
+    }
 }
 
 enum HealthPermissionState: Equatable {
@@ -832,7 +1263,7 @@ struct DashboardState: Hashable {
     let stressScore: StressScore
     let history: [DailyHealthSummary]
 
-    static let mock: DashboardState = {
+    static var mock: DashboardState {
         let calendar = Calendar.current
         let today = calendar.startOfDay(for: Date())
         let history = (0..<21).compactMap { offset -> DailyHealthSummary? in
@@ -855,7 +1286,87 @@ struct DashboardState: Hashable {
         let score = engine.score(today: history.last, baseline: baseline, baselineDays: 20)
         let stressScore = engine.stressScore(today: history.last, baseline: baseline, baselineDays: 20)
         return DashboardState(today: history.last, baseline: baseline, score: score, stressScore: stressScore, history: history)
+    }
+}
+
+private extension NervioWidgetSnapshot {
+    init(dashboardState: DashboardState) {
+        let today = dashboardState.today
+        self.init(
+            recoveryValue: dashboardState.score.value,
+            stressValue: dashboardState.stressScore.value,
+            status: dashboardState.score.status.localizedTitle,
+            summary: dashboardState.score.summary,
+            baselineDays: dashboardState.score.baselineDays,
+            hrv: NervioWidgetMetric(
+                title: L10n.string("HRV"),
+                value: today?.hrvMilliseconds.map { "\(Int($0.rounded())) ms" } ?? "--",
+                symbolName: "waveform.path.ecg"
+            ),
+            restingHeartRate: NervioWidgetMetric(
+                title: L10n.string("Resting HR"),
+                value: today?.restingHeartRate.map { "\(Int($0.rounded())) bpm" } ?? "--",
+                symbolName: "heart"
+            ),
+            sleep: NervioWidgetMetric(
+                title: L10n.string("Sleep"),
+                value: today?.sleepHours.map { String(format: "%.1f h", $0) } ?? "--",
+                symbolName: "bed.double"
+            ),
+            steps: NervioWidgetMetric(
+                title: L10n.string("Apple Watch Steps"),
+                value: today?.stepCount.map { Self.stepsFormatter.string(from: NSNumber(value: Int($0.rounded()))) ?? "\(Int($0.rounded()))" } ?? "--",
+                symbolName: "figure.walk"
+            ),
+            stepsValue: today?.stepCount.map { Int($0.rounded()) },
+            updatedAt: .now
+        )
+    }
+
+    private static let stepsFormatter: NumberFormatter = {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        return formatter
     }()
+}
+
+private final class NervioWatchTransfer: NSObject, WCSessionDelegate {
+    static let shared = NervioWatchTransfer()
+
+    private var session: WCSession? {
+        WCSession.isSupported() ? WCSession.default : nil
+    }
+
+    private override init() {
+        super.init()
+        guard let session else { return }
+        session.delegate = self
+        if session.activationState == .notActivated {
+            session.activate()
+        }
+    }
+
+    func send(_ snapshot: NervioWidgetSnapshot) {
+        guard let session,
+              session.activationState == .activated,
+              session.isPaired,
+              session.isWatchAppInstalled,
+              let data = try? JSONEncoder().encode(snapshot) else {
+            return
+        }
+
+        try? session.updateApplicationContext(["nervio.widget.snapshot": data])
+    }
+
+    func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: Error?) { }
+
+    func sessionDidBecomeInactive(_ session: WCSession) { }
+
+    func sessionDidDeactivate(_ session: WCSession) {
+        if session.activationState == .notActivated {
+            session.activate()
+        }
+    }
 }
 
 enum MockHealthData {
@@ -870,42 +1381,64 @@ struct OnboardingView: View {
 
     var body: some View {
         NavigationStack {
-            VStack(alignment: .leading, spacing: 28) {
-                Spacer(minLength: 24)
-                VStack(alignment: .leading, spacing: 16) {
-                    Image(systemName: "waveform.path.ecg.rectangle")
-                        .font(.system(size: 48, weight: .semibold))
-                        .foregroundStyle(.teal)
-                    Text(L10n.string("Nervio"))
-                        .font(.largeTitle.bold())
-                    Text(L10n.string("Recovery and nervous system insights based on available Apple Health data."))
-                        .font(.title3)
-                        .foregroundStyle(.secondary)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
-                VStack(spacing: 14) {
-                    OnboardingPoint(icon: "lock.shield", title: L10n.string("Private by design"), detail: L10n.string("Your health data never leaves your iPhone."))
-                    OnboardingPoint(icon: "heart.text.square", title: L10n.string("Read-only Health access"), detail: L10n.string("Nervio reads HRV, resting heart rate, sleep, activity, workouts, and mindful sessions."))
-                    OnboardingPoint(icon: "chart.line.uptrend.xyaxis", title: L10n.string("Transparent signals"), detail: L10n.string("Scores compare today with your own recent baseline and avoid medical conclusions."))
-                }
-                Spacer()
-                VStack(spacing: 12) {
-                    Button {
-                        Task { await onContinue() }
-                    } label: {
-                        Label(isLoading ? L10n.string("Loading") : L10n.string("Connect Apple Health"), systemImage: "heart.fill")
-                            .frame(maxWidth: .infinity)
-                    }
-                    .buttonStyle(.borderedProminent)
-                    .controlSize(.large)
-                    .disabled(isLoading || permissionState == .requesting)
+            ZStack {
+                NervioBackground()
 
-                    Button(L10n.string("Use Preview Data"), action: onUsePreviewData)
-                        .buttonStyle(.borderless)
-                    permissionMessage
+                VStack(alignment: .leading, spacing: 24) {
+                    Spacer(minLength: 20)
+
+                    VStack(alignment: .leading, spacing: 18) {
+                        ZStack {
+                            RoundedRectangle(cornerRadius: NervioVisuals.cornerRadius, style: .continuous)
+                                .fill(.teal.gradient)
+                                .frame(width: 72, height: 72)
+                                .shadow(color: .teal.opacity(0.24), radius: 18, y: 10)
+
+                            Image(systemName: "waveform.path.ecg.rectangle")
+                                .font(.system(size: 34, weight: .semibold))
+                                .foregroundStyle(.white)
+                        }
+
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text(L10n.string("Nervio"))
+                                .font(.system(.largeTitle, design: .rounded, weight: .bold))
+                            Text(L10n.string("Recovery and nervous system insights based on available Apple Health data."))
+                                .font(.title3.weight(.medium))
+                                .foregroundStyle(.secondary)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+                    }
+
+                    VStack(spacing: 12) {
+                        OnboardingPoint(icon: "lock.shield", title: L10n.string("Private by design"), detail: L10n.string("Your health data never leaves your iPhone."))
+                        OnboardingPoint(icon: "heart.text.square", title: L10n.string("Read-only Health access"), detail: L10n.string("Nervio reads HRV, resting heart rate, sleep, activity, workouts, and mindful sessions."))
+                        OnboardingPoint(icon: "chart.line.uptrend.xyaxis", title: L10n.string("Transparent signals"), detail: L10n.string("Scores compare today with your own recent baseline and avoid medical conclusions."))
+                    }
+                    .frame(maxWidth: .infinity)
+
+                    Spacer()
+
+                    VStack(spacing: 12) {
+                        Button {
+                            Task { await onContinue() }
+                        } label: {
+                            Label(isLoading ? L10n.string("Loading") : L10n.string("Connect Apple Health"), systemImage: "heart.fill")
+                                .font(.headline)
+                                .frame(maxWidth: .infinity)
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .tint(.teal)
+                        .controlSize(.large)
+                        .disabled(isLoading || permissionState == .requesting)
+
+                        Button(L10n.string("Use Preview Data"), action: onUsePreviewData)
+                            .buttonStyle(.borderless)
+                            .font(.subheadline.weight(.semibold))
+                        permissionMessage
+                    }
                 }
+                .padding(24)
             }
-            .padding(24)
         }
     }
 
@@ -937,8 +1470,9 @@ private struct OnboardingPoint: View {
         HStack(alignment: .top, spacing: 12) {
             Image(systemName: icon)
                 .font(.title3)
-                .foregroundStyle(.teal)
-                .frame(width: 28)
+                .foregroundStyle(.white)
+                .frame(width: 32, height: 32)
+                .background(.teal.gradient, in: RoundedRectangle(cornerRadius: NervioVisuals.cornerRadius, style: .continuous))
             VStack(alignment: .leading, spacing: 4) {
                 Text(title).font(.headline)
                 Text(detail)
@@ -946,7 +1480,10 @@ private struct OnboardingPoint: View {
                     .foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
             }
+            Spacer(minLength: 0)
         }
+        .frame(maxWidth: .infinity, minHeight: 74, alignment: .leading)
+        .nervioCard(tint: .teal, padding: 14)
     }
 }
 
@@ -984,23 +1521,28 @@ struct AppSettingsView: View {
 
     var body: some View {
         NavigationStack {
-            List {
-                Section(L10n.string("Language")) {
-                    Picker(L10n.string("Language"), selection: $selectedLanguageCode) {
-                        ForEach(AppLanguage.allCases) { language in
-                            Text(language.title).tag(language.rawValue)
-                        }
-                    }
-                }
+            ZStack {
+                NervioBackground()
 
-                Section(L10n.string("Appearance")) {
-                    Picker(L10n.string("Theme"), selection: $selectedTheme) {
-                        ForEach(AppTheme.allCases) { theme in
-                            Text(theme.title).tag(theme.rawValue)
+                List {
+                    Section(L10n.string("Language")) {
+                        Picker(L10n.string("Language"), selection: $selectedLanguageCode) {
+                            ForEach(AppLanguage.allCases) { language in
+                                Text(language.title).tag(language.rawValue)
+                            }
                         }
                     }
-                    .pickerStyle(.segmented)
+
+                    Section(L10n.string("Appearance")) {
+                        Picker(L10n.string("Theme"), selection: $selectedTheme) {
+                            ForEach(AppTheme.allCases) { theme in
+                                Text(theme.title).tag(theme.rawValue)
+                            }
+                        }
+                        .pickerStyle(.segmented)
+                    }
                 }
+                .scrollContentBackground(.hidden)
             }
             .navigationTitle(L10n.string("Settings"))
         }
@@ -1016,21 +1558,25 @@ struct DashboardView: View {
 
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 20) {
-                    ScoreHeader(score: dashboardState.score)
-                    StressScoreCard(stressScore: dashboardState.stressScore)
-                    if let errorMessage {
-                        MessageBanner(icon: "exclamationmark.triangle", title: L10n.string("Health data status"), message: errorMessage)
-                    } else if dashboardState.score.status == .insufficientData {
-                        MessageBanner(icon: "calendar.badge.clock", title: L10n.string("More data needed"), message: dashboardState.score.summary)
+            ZStack {
+                NervioBackground()
+
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 18) {
+                        ScoreHeader(score: dashboardState.score)
+                        StressScoreCard(stressScore: dashboardState.stressScore)
+                        if let errorMessage {
+                            MessageBanner(icon: "exclamationmark.triangle", title: L10n.string("Health data status"), message: errorMessage)
+                        } else if dashboardState.score.status == .insufficientData {
+                            MessageBanner(icon: "calendar.badge.clock", title: L10n.string("More data needed"), message: dashboardState.score.summary)
+                        }
+                        TodayMetricsView(dashboardState: dashboardState)
+                        ContributorsView(contributors: dashboardState.score.contributors)
                     }
-                    TodayMetricsView(summary: dashboardState.today)
-                    ContributorsView(contributors: dashboardState.score.contributors)
+                    .padding(.horizontal, NervioVisuals.horizontalPadding)
+                    .padding(.vertical, 16)
                 }
-                .padding(20)
             }
-            .background(Color(.systemGroupedBackground))
             .navigationTitle(L10n.string("Today"))
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
@@ -1048,22 +1594,30 @@ private struct ScoreHeader: View {
     let score: RecoveryScore
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 18) {
-            HStack(alignment: .center) {
+        VStack(alignment: .leading, spacing: 16) {
+            HStack(alignment: .center, spacing: 18) {
                 VStack(alignment: .leading, spacing: 8) {
                     Text(score.status.localizedTitle)
-                        .font(.subheadline.weight(.semibold))
-                        .foregroundStyle(.secondary)
+                        .font(.caption.weight(.bold))
+                        .textCase(.uppercase)
+                        .foregroundStyle(.teal)
                     Text(score.summary)
-                        .font(.title3.weight(.semibold))
+                        .font(.headline.weight(.semibold))
+                        .foregroundStyle(.primary)
+                        .lineSpacing(2)
                         .fixedSize(horizontal: false, vertical: true)
                 }
-                Spacer(minLength: 16)
+                Spacer(minLength: 4)
                 ZStack {
-                    Circle().stroke(.teal.opacity(0.16), lineWidth: 12)
+                    Circle().fill(.ultraThinMaterial)
+                    Circle().stroke(.white.opacity(0.38), lineWidth: 1)
+                    Circle().stroke(recoveryTint.opacity(0.16), lineWidth: 12)
                     Circle()
                         .trim(from: 0, to: CGFloat(score.value ?? 0) / 100)
-                        .stroke(.teal, style: StrokeStyle(lineWidth: 12, lineCap: .round))
+                        .stroke(
+                            LinearGradient(colors: recoveryGradientColors, startPoint: .topLeading, endPoint: .bottomTrailing),
+                            style: StrokeStyle(lineWidth: 12, lineCap: .round)
+                        )
                         .rotationEffect(.degrees(-90))
                     Text(score.value.map(String.init) ?? "--")
                         .font(.system(size: 34, weight: .bold, design: .rounded))
@@ -1074,8 +1628,15 @@ private struct ScoreHeader: View {
                 .font(.footnote)
                 .foregroundStyle(.secondary)
         }
-        .padding(18)
-        .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 8))
+        .nervioCard(tint: recoveryTint, padding: 18)
+    }
+
+    private var recoveryTint: Color {
+        semanticRecoveryColors(for: score.value).first ?? .teal
+    }
+
+    private var recoveryGradientColors: [Color] {
+        semanticRecoveryColors(for: score.value)
     }
 }
 
@@ -1085,10 +1646,14 @@ private struct StressScoreCard: View {
     var body: some View {
         HStack(alignment: .center, spacing: 16) {
             ZStack {
-                Circle().stroke(.orange.opacity(0.16), lineWidth: 10)
+                Circle().fill(.ultraThinMaterial)
+                Circle().stroke(stressTint.opacity(0.16), lineWidth: 10)
                 Circle()
                     .trim(from: 0, to: CGFloat(stressScore.value ?? 0) / 100)
-                    .stroke(.orange, style: StrokeStyle(lineWidth: 10, lineCap: .round))
+                    .stroke(
+                        LinearGradient(colors: stressGradientColors, startPoint: .topLeading, endPoint: .bottomTrailing),
+                        style: StrokeStyle(lineWidth: 10, lineCap: .round)
+                    )
                     .rotationEffect(.degrees(-90))
                 Text(stressScore.value.map(String.init) ?? "--")
                     .font(.system(size: 26, weight: .bold, design: .rounded))
@@ -1109,41 +1674,156 @@ private struct StressScoreCard: View {
 
             Spacer(minLength: 0)
         }
-        .padding(16)
-        .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 8))
+        .nervioCard(tint: stressTint, padding: 16)
+    }
+
+    private var stressTint: Color {
+        semanticStressColors(for: stressScore.value).first ?? .orange
+    }
+
+    private var stressGradientColors: [Color] {
+        semanticStressColors(for: stressScore.value)
+    }
+}
+
+private func semanticRecoveryColors(for value: Int?) -> [Color] {
+    guard let value else { return [.teal, .mint] }
+
+    switch value {
+    case 80...100:
+        return [.green, .mint]
+    case 60..<80:
+        return [.yellow, .green]
+    case 40..<60:
+        return [.orange, .yellow]
+    default:
+        return [.red, .orange]
+    }
+}
+
+private func semanticStressColors(for value: Int?) -> [Color] {
+    guard let value else { return [.orange, .yellow] }
+
+    switch value {
+    case 75...100:
+        return [.red, .orange]
+    case 50..<75:
+        return [.orange, .yellow]
+    case 25..<50:
+        return [.yellow, .green]
+    default:
+        return [.green, .mint]
     }
 }
 
 private struct TodayMetricsView: View {
-    let summary: DailyHealthSummary?
+    let dashboardState: DashboardState
+
+    private var summary: DailyHealthSummary? {
+        dashboardState.today
+    }
+
+    private var activityLoad: ActivityLoadResult? {
+        ActivityLoadCalculator().result(from: dashboardState.history)
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text(L10n.string("Today’s inputs")).font(.headline)
             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
-                MetricTile(title: L10n.string("HRV"), value: summary?.hrvMilliseconds.map { "\(Int($0.rounded())) ms" } ?? "--", icon: "waveform.path.ecg")
-                MetricTile(title: L10n.string("Resting HR"), value: summary?.restingHeartRate.map { "\(Int($0.rounded())) bpm" } ?? "--", icon: "heart")
-                MetricTile(title: L10n.string("Sleep"), value: summary?.sleepHours.map { String(format: "%.1f h", $0) } ?? "--", icon: "bed.double")
-                MetricTile(title: L10n.string("Active energy"), value: summary?.activeEnergyKilocalories.map { "\(Int($0.rounded())) kcal" } ?? "--", icon: "flame")
+                MetricTile(title: L10n.string("HRV"), value: summary?.hrvMilliseconds.map { "\(Int($0.rounded())) ms" } ?? "--", icon: "waveform.path.ecg", tint: .teal)
+                MetricTile(title: L10n.string("Resting HR"), value: summary?.restingHeartRate.map { "\(Int($0.rounded())) bpm" } ?? "--", icon: "heart", tint: .pink)
+                MetricTile(title: L10n.string("Sleep"), value: summary?.sleepHours.map { String(format: "%.1f h", $0) } ?? "--", icon: "bed.double", tint: .indigo)
+                MetricTile(title: L10n.string("Apple Watch Steps"), value: summary?.stepCount.map { Self.stepsFormatter.string(from: NSNumber(value: Int($0.rounded()))) ?? "\(Int($0.rounded()))" } ?? "--", icon: "figure.walk", tint: .green)
             }
+
+            ActivityLoadCard(activityLoad: activityLoad)
         }
     }
+
+    private static let stepsFormatter: NumberFormatter = {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        return formatter
+    }()
+}
+
+private struct ActivityLoadCard: View {
+    let activityLoad: ActivityLoadResult?
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack(spacing: 10) {
+                Image(systemName: "figure.walk.circle.fill")
+                    .font(.title3)
+                    .foregroundStyle(.white)
+                    .frame(width: 34, height: 34)
+                    .background(tint.gradient, in: RoundedRectangle(cornerRadius: NervioVisuals.cornerRadius, style: .continuous))
+
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(L10n.string("Activity Load"))
+                        .font(.subheadline.weight(.semibold))
+                    Text(activityLoad?.label ?? L10n.string("No Apple Watch step data available."))
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                }
+
+                Spacer(minLength: 0)
+            }
+
+            if let activityLoad {
+                Text(activityLoad.stepsVersusBaselineText)
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(tint)
+                Text(L10n.format("7-day average: %@ steps • 21-day average: %@ steps", formattedSteps(activityLoad.average7DaySteps), formattedSteps(activityLoad.average21DaySteps)))
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .nervioCard(tint: tint, padding: 14)
+    }
+
+    private var tint: Color {
+        switch activityLoad?.level {
+        case .low: .teal
+        case .normal: .green
+        case .elevated: .orange
+        case .high: .red
+        case nil: .secondary
+        }
+    }
+
+    private func formattedSteps(_ value: Double?) -> String {
+        guard let value else { return "--" }
+        return Self.stepsFormatter.string(from: NSNumber(value: Int(value.rounded()))) ?? "\(Int(value.rounded()))"
+    }
+
+    private static let stepsFormatter: NumberFormatter = {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        return formatter
+    }()
 }
 
 private struct MetricTile: View {
     let title: String
     let value: String
     let icon: String
+    let tint: Color
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Image(systemName: icon).foregroundStyle(.teal)
+            Image(systemName: icon)
+                .font(.headline)
+                .foregroundStyle(.white)
+                .frame(width: 34, height: 34)
+                .background(tint.gradient, in: RoundedRectangle(cornerRadius: NervioVisuals.cornerRadius, style: .continuous))
             Text(value).font(.title3.weight(.semibold)).lineLimit(1).minimumScaleFactor(0.75)
             Text(title).font(.caption).foregroundStyle(.secondary)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(14)
-        .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 8))
+        .nervioCard(tint: tint, padding: 14)
     }
 }
 
@@ -1157,15 +1837,16 @@ private struct ContributorsView: View {
                 Text(L10n.string("Contributors will appear after Nervio can compare today with your rolling baseline."))
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
-                    .padding(16)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 8))
+                    .nervioCard(tint: .teal, padding: 16)
             } else {
                 ForEach(contributors) { contributor in
                     HStack(alignment: .top, spacing: 12) {
                         Image(systemName: icon(for: contributor.direction))
-                            .foregroundStyle(color(for: contributor.direction))
-                            .frame(width: 24)
+                            .font(.title3)
+                            .foregroundStyle(.white)
+                            .frame(width: 34, height: 34)
+                            .background(color(for: contributor.direction).gradient, in: RoundedRectangle(cornerRadius: NervioVisuals.cornerRadius, style: .continuous))
                         VStack(alignment: .leading, spacing: 4) {
                             HStack {
                                 Text(contributor.title).font(.subheadline.weight(.semibold))
@@ -1178,8 +1859,7 @@ private struct ContributorsView: View {
                                 .fixedSize(horizontal: false, vertical: true)
                         }
                     }
-                    .padding(14)
-                    .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 8))
+                    .nervioCard(tint: color(for: contributor.direction), padding: 14)
                 }
             }
         }
@@ -1209,14 +1889,17 @@ private struct MessageBanner: View {
 
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
-            Image(systemName: icon).foregroundStyle(.orange)
+            Image(systemName: icon)
+                .font(.headline)
+                .foregroundStyle(.white)
+                .frame(width: 32, height: 32)
+                .background(.orange.gradient, in: RoundedRectangle(cornerRadius: NervioVisuals.cornerRadius, style: .continuous))
             VStack(alignment: .leading, spacing: 4) {
                 Text(title).font(.subheadline.weight(.semibold))
                 Text(message).font(.footnote).foregroundStyle(.secondary)
             }
         }
-        .padding(14)
-        .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 8))
+        .nervioCard(tint: .orange, padding: 14)
     }
 }
 
@@ -1225,18 +1908,24 @@ struct TrendsView: View {
 
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 20) {
-                    TrendChart(title: L10n.string("HRV"), unit: L10n.string("ms"), color: .teal, points: dashboardState.history.compactMap { summary in summary.hrvMilliseconds.map { TrendPoint(date: summary.date, value: $0) } })
-                    TrendChart(title: L10n.string("Resting heart rate"), unit: L10n.string("bpm"), color: .pink, points: dashboardState.history.compactMap { summary in summary.restingHeartRate.map { TrendPoint(date: summary.date, value: $0) } })
-                    TrendChart(title: L10n.string("Sleep"), unit: L10n.string("hours"), color: .indigo, points: dashboardState.history.compactMap { summary in summary.sleepHours.map { TrendPoint(date: summary.date, value: $0) } })
-                    Text(L10n.string("Trends compare available Apple Health samples over time. Missing points usually mean no readable data was available for that day."))
-                        .font(.footnote)
-                        .foregroundStyle(.secondary)
+            ZStack {
+                NervioBackground()
+
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 18) {
+                        TrendChart(title: L10n.string("HRV"), unit: L10n.string("ms"), color: .teal, points: dashboardState.history.compactMap { summary in summary.hrvMilliseconds.map { TrendPoint(date: summary.date, value: $0) } })
+                        TrendChart(title: L10n.string("Resting heart rate"), unit: L10n.string("bpm"), color: .pink, points: dashboardState.history.compactMap { summary in summary.restingHeartRate.map { TrendPoint(date: summary.date, value: $0) } })
+                        TrendChart(title: L10n.string("Sleep"), unit: L10n.string("hours"), color: .indigo, points: dashboardState.history.compactMap { summary in summary.sleepHours.map { TrendPoint(date: summary.date, value: $0) } })
+                        TrendChart(title: L10n.string("Apple Watch Steps"), unit: L10n.string("steps"), color: .green, points: dashboardState.history.compactMap { summary in summary.stepCount.map { TrendPoint(date: summary.date, value: $0) } })
+                        Text(L10n.string("Trends compare available Apple Health samples over time. Missing points usually mean no readable data was available for that day."))
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
+                            .nervioCard(tint: .indigo, padding: 14)
+                    }
+                    .padding(.horizontal, NervioVisuals.horizontalPadding)
+                    .padding(.vertical, 16)
                 }
-                .padding(20)
             }
-            .background(Color(.systemGroupedBackground))
             .navigationTitle(L10n.string("Trends"))
         }
     }
@@ -1257,7 +1946,7 @@ private struct TrendChart: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack(alignment: .firstTextBaseline) {
-                Text(title).font(.headline)
+                Text(title).font(.headline.weight(.semibold))
                 Spacer()
                 Text(latestValue).font(.subheadline.monospacedDigit()).foregroundStyle(.secondary)
             }
@@ -1270,9 +1959,12 @@ private struct TrendChart: View {
                 Chart(points) { point in
                     LineMark(x: .value(L10n.string("Date"), point.date), y: .value(title, point.value))
                         .foregroundStyle(color)
+                        .lineStyle(StrokeStyle(lineWidth: 3, lineCap: .round, lineJoin: .round))
                         .interpolationMethod(.catmullRom)
                     AreaMark(x: .value(L10n.string("Date"), point.date), y: .value(title, point.value))
-                        .foregroundStyle(color.opacity(0.12))
+                        .foregroundStyle(
+                            LinearGradient(colors: [color.opacity(0.26), color.opacity(0.03)], startPoint: .top, endPoint: .bottom)
+                        )
                         .interpolationMethod(.catmullRom)
                 }
                 .chartXAxis { AxisMarks(values: .automatic(desiredCount: 4)) }
@@ -1280,8 +1972,7 @@ private struct TrendChart: View {
                 .frame(height: 180)
             }
         }
-        .padding(16)
-        .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 8))
+        .nervioCard(tint: color, padding: 16)
     }
 
     private var latestValue: String {
@@ -1297,28 +1988,33 @@ struct PrivacySettingsView: View {
 
     var body: some View {
         NavigationStack {
-            List {
-                Section(L10n.string("Privacy")) {
-                    SettingsRow(icon: "iphone", title: L10n.string("On-device only"), detail: L10n.string("Health data is read locally on this iPhone."))
-                    SettingsRow(icon: "icloud.slash", title: L10n.string("No cloud backend"), detail: L10n.string("Nervio does not use accounts, Firebase, Supabase, analytics SDKs, or external API calls."))
-                    SettingsRow(icon: "square.and.pencil", title: L10n.string("Read-only"), detail: L10n.string("Nervio does not write data to Apple Health."))
-                }
-                Section(L10n.string("Apple Health")) {
-                    HStack {
-                        Label(L10n.string("Permission"), systemImage: "heart.text.square")
-                        Spacer()
-                        Text(permissionLabel).foregroundStyle(.secondary)
+            ZStack {
+                NervioBackground()
+
+                List {
+                    Section(L10n.string("Privacy")) {
+                        SettingsRow(icon: "iphone", title: L10n.string("On-device only"), detail: L10n.string("Health data is read locally on this iPhone."))
+                        SettingsRow(icon: "icloud.slash", title: L10n.string("No cloud backend"), detail: L10n.string("Nervio does not use accounts, Firebase, Supabase, analytics SDKs, or external API calls."))
+                        SettingsRow(icon: "square.and.pencil", title: L10n.string("Read-only"), detail: L10n.string("Nervio does not write data to Apple Health."))
                     }
-                    Button { Task { await onRequestAccess() } } label: { Label(L10n.string("Request Health Access"), systemImage: "heart.fill") }
+                    Section(L10n.string("Apple Health")) {
+                        HStack {
+                            Label(L10n.string("Permission"), systemImage: "heart.text.square")
+                            Spacer()
+                            Text(permissionLabel).foregroundStyle(.secondary)
+                        }
+                        Button { Task { await onRequestAccess() } } label: { Label(L10n.string("Request Health Access"), systemImage: "heart.fill") }
+                    }
+                    Section(L10n.string("Onboarding")) {
+                        Button(L10n.string("Show Onboarding Again"), action: onResetOnboarding)
+                    }
+                    Section {
+                        Text(L10n.string("Nervio estimates wellness-oriented recovery signals from available Apple Health data. It does not diagnose stress, burnout, illness, or any medical condition."))
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
+                    }
                 }
-                Section(L10n.string("Onboarding")) {
-                    Button(L10n.string("Show Onboarding Again"), action: onResetOnboarding)
-                }
-                Section {
-                    Text(L10n.string("Nervio estimates wellness-oriented recovery signals from available Apple Health data. It does not diagnose stress, burnout, illness, or any medical condition."))
-                        .font(.footnote)
-                        .foregroundStyle(.secondary)
-                }
+                .scrollContentBackground(.hidden)
             }
             .navigationTitle(L10n.string("Privacy"))
         }
@@ -1342,7 +2038,10 @@ private struct SettingsRow: View {
 
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
-            Image(systemName: icon).foregroundStyle(.teal).frame(width: 24)
+            Image(systemName: icon)
+                .foregroundStyle(.white)
+                .frame(width: 30, height: 30)
+                .background(.teal.gradient, in: RoundedRectangle(cornerRadius: NervioVisuals.cornerRadius, style: .continuous))
             VStack(alignment: .leading, spacing: 3) {
                 Text(title)
                 Text(detail).font(.footnote).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)

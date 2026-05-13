@@ -6,7 +6,42 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		86006E582FB3B42B00714B37 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86FE42EC2FB309B70089F00F /* WidgetKit.framework */; };
+		86006E592FB3B42B00714B37 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86FE42EE2FB309B70089F00F /* SwiftUI.framework */; };
+		86006E682FB3B42B00714B37 /* NervioWatch ComplicationsExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 86006E572FB3B42B00714B37 /* NervioWatch ComplicationsExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		86006E702FB3BB0D00714B37 /* NervioWatch Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 86006E232FB3B1F500714B37 /* NervioWatch Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
+		86006E302FB3B1F600714B37 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 86E456062FB236C800040516 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 86006E222FB3B1F500714B37;
+			remoteInfo = "NervioWatch Watch App";
+		};
+		86006E3A2FB3B1F600714B37 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 86E456062FB236C800040516 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 86006E222FB3B1F500714B37;
+			remoteInfo = "NervioWatch Watch App";
+		};
+		86006E412FB3B1F600714B37 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 86E456062FB236C800040516 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 86006E222FB3B1F500714B37;
+			remoteInfo = "NervioWatch Watch App";
+		};
+		86006E662FB3B42B00714B37 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 86E456062FB236C800040516 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 86006E562FB3B42B00714B37;
+			remoteInfo = "NervioWatch ComplicationsExtension";
+		};
 		86E4561C2FB236C900040516 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 86E456062FB236C800040516 /* Project object */;
@@ -23,7 +58,47 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		86006E1C2FB3B0F900714B37 /* Embed Watch Content */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
+			dstSubfolderSpec = 16;
+			files = (
+				86006E702FB3BB0D00714B37 /* NervioWatch Watch App.app in Embed Watch Content */,
+			);
+			name = "Embed Watch Content";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		86006E6D2FB3B42B00714B37 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				86006E682FB3B42B00714B37 /* NervioWatch ComplicationsExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		86FE43012FB309B80089F00F /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		86006E232FB3B1F500714B37 /* NervioWatch Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "NervioWatch Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		86006E2F2FB3B1F600714B37 /* NervioWatch Watch AppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "NervioWatch Watch AppTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		86006E392FB3B1F600714B37 /* NervioWatch Watch AppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "NervioWatch Watch AppUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		86006E572FB3B42B00714B37 /* NervioWatch ComplicationsExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "NervioWatch ComplicationsExtension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		86006E6E2FB3B57D00714B37 /* NervioWatch ComplicationsExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "NervioWatch ComplicationsExtension.entitlements"; sourceTree = "<group>"; };
 		86C7BD4E2FB26AA80027212B /* ro */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ro; path = Localizable.strings; sourceTree = "<group>"; };
 		86C7BD502FB26AEB0027212B /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = Localizable.strings; sourceTree = "<group>"; };
 		86C7BD522FB26B310027212B /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = Localizable.strings; sourceTree = "<group>"; };
@@ -34,21 +109,25 @@
 		86E4561B2FB236C900040516 /* Nervio — Recovery SignalsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Nervio — Recovery SignalsTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		86E456252FB236C900040516 /* Nervio — Recovery SignalsUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Nervio — Recovery SignalsUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		86E456472FB2383500040516 /* Nervio.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Nervio.entitlements; sourceTree = "<group>"; };
+		86FE42EC2FB309B70089F00F /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		86FE42EE2FB309B70089F00F /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		86FE430D2FB30C250089F00F /* nervio.widgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = nervio.widgetExtension.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		86006E6C2FB3B42B00714B37 /* Exceptions for "NervioWatch Complications" folder in "NervioWatch ComplicationsExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 86006E562FB3B42B00714B37 /* NervioWatch ComplicationsExtension */;
+		};
 		86E4564D2FB2386400040516 /* Exceptions for "Nervio — Recovery Signals" folder in "Nervio — Recovery Signals" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				App/NervioAppModel.swift,
-				de.lproj/Localizable.strings,
-				es.lproj/Localizable.strings,
-				fr.lproj/Localizable.strings,
 				Health/HealthKitManager.swift,
-				it.lproj/Localizable.strings,
 				Models/RecoveryModels.swift,
-				pt.lproj/Localizable.strings,
-				ro.lproj/Localizable.strings,
 				Scoring/BaselineCalculator.swift,
 				Scoring/RecoveryScoreEngine.swift,
 				Views/DashboardView.swift,
@@ -62,6 +141,29 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		86006E242FB3B1F500714B37 /* NervioWatch Watch App */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "NervioWatch Watch App";
+			sourceTree = "<group>";
+		};
+		86006E322FB3B1F600714B37 /* NervioWatch Watch AppTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "NervioWatch Watch AppTests";
+			sourceTree = "<group>";
+		};
+		86006E3C2FB3B1F600714B37 /* NervioWatch Watch AppUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "NervioWatch Watch AppUITests";
+			sourceTree = "<group>";
+		};
+		86006E5A2FB3B42B00714B37 /* NervioWatch Complications */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				86006E6C2FB3B42B00714B37 /* Exceptions for "NervioWatch Complications" folder in "NervioWatch ComplicationsExtension" target */,
+			);
+			path = "NervioWatch Complications";
+			sourceTree = "<group>";
+		};
 		86E456102FB236C800040516 /* Nervio — Recovery Signals */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
@@ -80,9 +182,44 @@
 			path = "Nervio — Recovery SignalsUITests";
 			sourceTree = "<group>";
 		};
+		86FE42F02FB309B70089F00F /* nervio.widget */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = nervio.widget;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		86006E202FB3B1F500714B37 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		86006E2C2FB3B1F600714B37 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		86006E362FB3B1F600714B37 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		86006E542FB3B42B00714B37 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				86006E592FB3B42B00714B37 /* SwiftUI.framework in Frameworks */,
+				86006E582FB3B42B00714B37 /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		86E4560B2FB236C800040516 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -158,9 +295,17 @@
 		86E456052FB236C800040516 = {
 			isa = PBXGroup;
 			children = (
+				86006E6E2FB3B57D00714B37 /* NervioWatch ComplicationsExtension.entitlements */,
+				86FE430D2FB30C250089F00F /* nervio.widgetExtension.entitlements */,
 				86E456102FB236C800040516 /* Nervio — Recovery Signals */,
 				86E4561E2FB236C900040516 /* Nervio — Recovery SignalsTests */,
 				86E456282FB236C900040516 /* Nervio — Recovery SignalsUITests */,
+				86FE42F02FB309B70089F00F /* nervio.widget */,
+				86006E242FB3B1F500714B37 /* NervioWatch Watch App */,
+				86006E322FB3B1F600714B37 /* NervioWatch Watch AppTests */,
+				86006E3C2FB3B1F600714B37 /* NervioWatch Watch AppUITests */,
+				86006E5A2FB3B42B00714B37 /* NervioWatch Complications */,
+				86FE42EB2FB309B70089F00F /* Frameworks */,
 				86E4560F2FB236C800040516 /* Products */,
 				86E456382FB2371A00040516 /* App */,
 				86E456392FB2371A00040516 /* Health */,
@@ -183,6 +328,10 @@
 				86E4560E2FB236C800040516 /* Nervio — Recovery Signals.app */,
 				86E4561B2FB236C900040516 /* Nervio — Recovery SignalsTests.xctest */,
 				86E456252FB236C900040516 /* Nervio — Recovery SignalsUITests.xctest */,
+				86006E232FB3B1F500714B37 /* NervioWatch Watch App.app */,
+				86006E2F2FB3B1F600714B37 /* NervioWatch Watch AppTests.xctest */,
+				86006E392FB3B1F600714B37 /* NervioWatch Watch AppUITests.xctest */,
+				86006E572FB3B42B00714B37 /* NervioWatch ComplicationsExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -222,9 +371,110 @@
 			path = Views;
 			sourceTree = "<group>";
 		};
+		86FE42EB2FB309B70089F00F /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				86FE42EC2FB309B70089F00F /* WidgetKit.framework */,
+				86FE42EE2FB309B70089F00F /* SwiftUI.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		86006E222FB3B1F500714B37 /* NervioWatch Watch App */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 86006E442FB3B1F600714B37 /* Build configuration list for PBXNativeTarget "NervioWatch Watch App" */;
+			buildPhases = (
+				86006E1F2FB3B1F500714B37 /* Sources */,
+				86006E202FB3B1F500714B37 /* Frameworks */,
+				86006E212FB3B1F500714B37 /* Resources */,
+				86006E6D2FB3B42B00714B37 /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				86006E672FB3B42B00714B37 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				86006E242FB3B1F500714B37 /* NervioWatch Watch App */,
+			);
+			name = "NervioWatch Watch App";
+			packageProductDependencies = (
+			);
+			productName = "NervioWatch Watch App";
+			productReference = 86006E232FB3B1F500714B37 /* NervioWatch Watch App.app */;
+			productType = "com.apple.product-type.application";
+		};
+		86006E2E2FB3B1F600714B37 /* NervioWatch Watch AppTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 86006E472FB3B1F600714B37 /* Build configuration list for PBXNativeTarget "NervioWatch Watch AppTests" */;
+			buildPhases = (
+				86006E2B2FB3B1F600714B37 /* Sources */,
+				86006E2C2FB3B1F600714B37 /* Frameworks */,
+				86006E2D2FB3B1F600714B37 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				86006E312FB3B1F600714B37 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				86006E322FB3B1F600714B37 /* NervioWatch Watch AppTests */,
+			);
+			name = "NervioWatch Watch AppTests";
+			packageProductDependencies = (
+			);
+			productName = "NervioWatch Watch AppTests";
+			productReference = 86006E2F2FB3B1F600714B37 /* NervioWatch Watch AppTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		86006E382FB3B1F600714B37 /* NervioWatch Watch AppUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 86006E4A2FB3B1F600714B37 /* Build configuration list for PBXNativeTarget "NervioWatch Watch AppUITests" */;
+			buildPhases = (
+				86006E352FB3B1F600714B37 /* Sources */,
+				86006E362FB3B1F600714B37 /* Frameworks */,
+				86006E372FB3B1F600714B37 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				86006E3B2FB3B1F600714B37 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				86006E3C2FB3B1F600714B37 /* NervioWatch Watch AppUITests */,
+			);
+			name = "NervioWatch Watch AppUITests";
+			packageProductDependencies = (
+			);
+			productName = "NervioWatch Watch AppUITests";
+			productReference = 86006E392FB3B1F600714B37 /* NervioWatch Watch AppUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+		86006E562FB3B42B00714B37 /* NervioWatch ComplicationsExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 86006E692FB3B42B00714B37 /* Build configuration list for PBXNativeTarget "NervioWatch ComplicationsExtension" */;
+			buildPhases = (
+				86006E532FB3B42B00714B37 /* Sources */,
+				86006E542FB3B42B00714B37 /* Frameworks */,
+				86006E552FB3B42B00714B37 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				86006E5A2FB3B42B00714B37 /* NervioWatch Complications */,
+			);
+			name = "NervioWatch ComplicationsExtension";
+			packageProductDependencies = (
+			);
+			productName = "NervioWatch ComplicationsExtension";
+			productReference = 86006E572FB3B42B00714B37 /* NervioWatch ComplicationsExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		86E4560D2FB236C800040516 /* Nervio — Recovery Signals */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 86E4562F2FB236C900040516 /* Build configuration list for PBXNativeTarget "Nervio — Recovery Signals" */;
@@ -232,10 +482,13 @@
 				86E4560A2FB236C800040516 /* Sources */,
 				86E4560B2FB236C800040516 /* Frameworks */,
 				86E4560C2FB236C800040516 /* Resources */,
+				86FE43012FB309B80089F00F /* Embed Foundation Extensions */,
+				86006E1C2FB3B0F900714B37 /* Embed Watch Content */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				86006E422FB3B1F600714B37 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				86E456102FB236C800040516 /* Nervio — Recovery Signals */,
@@ -303,6 +556,20 @@
 				LastSwiftUpdateCheck = 2640;
 				LastUpgradeCheck = 2640;
 				TargetAttributes = {
+					86006E222FB3B1F500714B37 = {
+						CreatedOnToolsVersion = 26.4.1;
+					};
+					86006E2E2FB3B1F600714B37 = {
+						CreatedOnToolsVersion = 26.4.1;
+						TestTargetID = 86006E222FB3B1F500714B37;
+					};
+					86006E382FB3B1F600714B37 = {
+						CreatedOnToolsVersion = 26.4.1;
+						TestTargetID = 86006E222FB3B1F500714B37;
+					};
+					86006E562FB3B42B00714B37 = {
+						CreatedOnToolsVersion = 26.4.1;
+					};
 					86E4560D2FB236C800040516 = {
 						CreatedOnToolsVersion = 26.4.1;
 					};
@@ -339,11 +606,43 @@
 				86E4560D2FB236C800040516 /* Nervio — Recovery Signals */,
 				86E4561A2FB236C900040516 /* Nervio — Recovery SignalsTests */,
 				86E456242FB236C900040516 /* Nervio — Recovery SignalsUITests */,
+				86006E222FB3B1F500714B37 /* NervioWatch Watch App */,
+				86006E2E2FB3B1F600714B37 /* NervioWatch Watch AppTests */,
+				86006E382FB3B1F600714B37 /* NervioWatch Watch AppUITests */,
+				86006E562FB3B42B00714B37 /* NervioWatch ComplicationsExtension */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		86006E212FB3B1F500714B37 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		86006E2D2FB3B1F600714B37 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		86006E372FB3B1F600714B37 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		86006E552FB3B42B00714B37 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		86E4560C2FB236C800040516 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -368,6 +667,34 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		86006E1F2FB3B1F500714B37 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		86006E2B2FB3B1F600714B37 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		86006E352FB3B1F600714B37 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		86006E532FB3B42B00714B37 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		86E4560A2FB236C800040516 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -392,6 +719,26 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		86006E312FB3B1F600714B37 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 86006E222FB3B1F500714B37 /* NervioWatch Watch App */;
+			targetProxy = 86006E302FB3B1F600714B37 /* PBXContainerItemProxy */;
+		};
+		86006E3B2FB3B1F600714B37 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 86006E222FB3B1F500714B37 /* NervioWatch Watch App */;
+			targetProxy = 86006E3A2FB3B1F600714B37 /* PBXContainerItemProxy */;
+		};
+		86006E422FB3B1F600714B37 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 86006E222FB3B1F500714B37 /* NervioWatch Watch App */;
+			targetProxy = 86006E412FB3B1F600714B37 /* PBXContainerItemProxy */;
+		};
+		86006E672FB3B42B00714B37 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 86006E562FB3B42B00714B37 /* NervioWatch ComplicationsExtension */;
+			targetProxy = 86006E662FB3B42B00714B37 /* PBXContainerItemProxy */;
+		};
 		86E4561D2FB236C900040516 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 86E4560D2FB236C800040516 /* Nervio — Recovery Signals */;
@@ -456,6 +803,238 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		86006E452FB3B1F600714B37 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES = "";
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "NervioWatch Watch App/NervioWatch Watch App.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 62QUMB3PNM;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = NervioWatch;
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "Nervio reads ​Apple ​Watch step count to show local recovery and activity signals.";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKApplication = YES;
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = "com.florinsima.Nervio---Recovery-Signals";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.florinsima.Nervio---Recovery-Signals.watchkitapp";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = NO;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 10.0;
+			};
+			name = Debug;
+		};
+		86006E462FB3B1F600714B37 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES = "";
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "NervioWatch Watch App/NervioWatch Watch App.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 62QUMB3PNM;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = NervioWatch;
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "Nervio reads ​Apple ​Watch step count to show local recovery and activity signals.";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKApplication = YES;
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = "com.florinsima.Nervio---Recovery-Signals";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.florinsima.Nervio---Recovery-Signals.watchkitapp";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = NO;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 10.0;
+			};
+			name = Release;
+		};
+		86006E482FB3B1F600714B37 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 62QUMB3PNM;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.florinsima.NervioWatch-Watch-AppTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/NervioWatch Watch App.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/NervioWatch Watch App";
+				WATCHOS_DEPLOYMENT_TARGET = 10.0;
+			};
+			name = Debug;
+		};
+		86006E492FB3B1F600714B37 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 62QUMB3PNM;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.florinsima.NervioWatch-Watch-AppTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/NervioWatch Watch App.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/NervioWatch Watch App";
+				WATCHOS_DEPLOYMENT_TARGET = 10.0;
+			};
+			name = Release;
+		};
+		86006E4B2FB3B1F600714B37 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 62QUMB3PNM;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.florinsima.NervioWatch-Watch-AppUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				TEST_TARGET_NAME = "NervioWatch Watch App";
+				WATCHOS_DEPLOYMENT_TARGET = 10.0;
+			};
+			name = Debug;
+		};
+		86006E4C2FB3B1F600714B37 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 62QUMB3PNM;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.florinsima.NervioWatch-Watch-AppUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				TEST_TARGET_NAME = "NervioWatch Watch App";
+				WATCHOS_DEPLOYMENT_TARGET = 10.0;
+			};
+			name = Release;
+		};
+		86006E6A2FB3B42B00714B37 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = "NervioWatch ComplicationsExtension.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 62QUMB3PNM;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "NervioWatch Complications/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "NervioWatch Complications";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.florinsima.Nervio---Recovery-Signals.watchkitapp.NervioWatch-Complications";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 10.0;
+			};
+			name = Debug;
+		};
+		86006E6B2FB3B42B00714B37 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = "NervioWatch ComplicationsExtension.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 62QUMB3PNM;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "NervioWatch Complications/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "NervioWatch Complications";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.florinsima.Nervio---Recovery-Signals.watchkitapp.NervioWatch-Complications";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 10.0;
+			};
+			name = Release;
+		};
 		86E4562D2FB236C900040516 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -509,7 +1088,8 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 26.4;
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "Nervio reads ​Apple ​Health data locally to estimate recovery signals and physiological load trends.";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -517,6 +1097,7 @@
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				WATCHOS_DEPLOYMENT_TARGET = 9.6;
 			};
 			name = Debug;
 		};
@@ -567,13 +1148,15 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 26.4;
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "Nervio reads ​Apple ​Health data locally to estimate recovery signals and physiological load trends.";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				VALIDATE_PRODUCT = YES;
+				WATCHOS_DEPLOYMENT_TARGET = 9.6;
 			};
 			name = Release;
 		};
@@ -588,6 +1171,7 @@
 				DEVELOPMENT_TEAM = 62QUMB3PNM;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "";
 				INFOPLIST_KEY_CFBundleDisplayName = "Nervio Recovery Signals";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.healthcare-fitness";
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "Nervio reads ​Apple ​Health data locally to estimate recovery signals and physiological load trends.";
@@ -624,6 +1208,7 @@
 				DEVELOPMENT_TEAM = 62QUMB3PNM;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "";
 				INFOPLIST_KEY_CFBundleDisplayName = "Nervio Recovery Signals";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.healthcare-fitness";
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "Nervio reads ​Apple ​Health data locally to estimate recovery signals and physiological load trends.";
@@ -657,7 +1242,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 62QUMB3PNM;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 26.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.florinsima.Nervio---Recovery-SignalsTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -679,7 +1264,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 62QUMB3PNM;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 26.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.florinsima.Nervio---Recovery-SignalsTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -736,6 +1321,42 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		86006E442FB3B1F600714B37 /* Build configuration list for PBXNativeTarget "NervioWatch Watch App" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				86006E452FB3B1F600714B37 /* Debug */,
+				86006E462FB3B1F600714B37 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		86006E472FB3B1F600714B37 /* Build configuration list for PBXNativeTarget "NervioWatch Watch AppTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				86006E482FB3B1F600714B37 /* Debug */,
+				86006E492FB3B1F600714B37 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		86006E4A2FB3B1F600714B37 /* Build configuration list for PBXNativeTarget "NervioWatch Watch AppUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				86006E4B2FB3B1F600714B37 /* Debug */,
+				86006E4C2FB3B1F600714B37 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		86006E692FB3B42B00714B37 /* Build configuration list for PBXNativeTarget "NervioWatch ComplicationsExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				86006E6A2FB3B42B00714B37 /* Debug */,
+				86006E6B2FB3B42B00714B37 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		86E456092FB236C800040516 /* Build configuration list for PBXProject "Nervio — Recovery Signals" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
