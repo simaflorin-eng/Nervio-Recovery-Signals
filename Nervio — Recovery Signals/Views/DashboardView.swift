@@ -79,7 +79,15 @@ private struct ScoreHeader: View {
                 .frame(width: 104, height: 104)
             }
 
-            Text("Based on \(score.baselineDays) baseline days. This is a wellness signal, not a diagnosis or medical conclusion.")
+            Text(
+                String(
+                    format: NSLocalizedString(
+                        "Based on %d baseline days. This is a wellness signal, not a diagnosis or medical conclusion.",
+                        comment: ""
+                    ),
+                    score.baselineDays
+                )
+            )
                 .font(.footnote)
                 .foregroundStyle(.secondary)
         }
@@ -119,7 +127,7 @@ private struct MetricTile: View {
                 .font(.title3.weight(.semibold))
                 .lineLimit(1)
                 .minimumScaleFactor(0.75)
-            Text(title)
+            Text(LocalizedStringKey(title))
                 .font(.caption)
                 .foregroundStyle(.secondary)
         }
@@ -201,7 +209,7 @@ private struct MessageBanner: View {
             Image(systemName: icon)
                 .foregroundStyle(.orange)
             VStack(alignment: .leading, spacing: 4) {
-                Text(title)
+                Text(LocalizedStringKey(title))
                     .font(.subheadline.weight(.semibold))
                 Text(message)
                     .font(.footnote)

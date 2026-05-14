@@ -45,19 +45,19 @@ struct PrivacySettingsView: View {
 
     private var permissionLabel: String {
         switch permissionState {
-        case .notDetermined: "Not requested"
-        case .unavailable: "Unavailable"
-        case .requesting: "Requesting"
-        case .authorized: "Requested"
-        case .denied: "Needs review"
+        case .notDetermined: NSLocalizedString("Not requested", comment: "")
+        case .unavailable: NSLocalizedString("Unavailable", comment: "")
+        case .requesting: NSLocalizedString("Requesting", comment: "")
+        case .authorized: NSLocalizedString("Requested", comment: "")
+        case .denied: NSLocalizedString("Needs review", comment: "")
         }
     }
 }
 
 private struct SettingsRow: View {
     let icon: String
-    let title: String
-    let detail: String
+    let title: LocalizedStringKey
+    let detail: LocalizedStringKey
 
     var body: some View {
         HStack(alignment: .top, spacing: 12) {

@@ -62,7 +62,7 @@ private struct TrendChart: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack(alignment: .firstTextBaseline) {
-                Text(title)
+                Text(LocalizedStringKey(title))
                     .font(.headline)
                 Spacer()
                 Text(latestValue)
@@ -106,7 +106,7 @@ private struct TrendChart: View {
 
     private var latestValue: String {
         guard let value = points.last?.value else { return "--" }
-        return "\(String(format: "%.1f", value)) \(unit)"
+        return "\(String(format: "%.1f", value)) \(NSLocalizedString(unit, comment: ""))"
     }
 }
 

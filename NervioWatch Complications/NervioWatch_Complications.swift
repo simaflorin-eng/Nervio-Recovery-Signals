@@ -80,7 +80,8 @@ struct NervioComplicationProvider: TimelineProvider {
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<NervioComplicationEntry>) -> Void) {
         let entry = NervioComplicationEntry(date: .now, signal: signal, snapshot: NervioComplicationSnapshotStore.load())
-        let refreshDate = Calendar.current.date(byAdding: .minute, value: 30, to: .now) ?? .now.addingTimeInterval(1800)
+        // Ask WidgetKit for a fresh timeline more often so steps refresh without opening the app.
+        let refreshDate = Calendar.current.date(byAdding: .minute, value: 10, to: .now) ?? .now.addingTimeInterval(600)
         completion(Timeline(entries: [entry], policy: .after(refreshDate)))
     }
 }

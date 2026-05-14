@@ -37,7 +37,10 @@ struct OnboardingView: View {
                     Button {
                         Task { await onContinue() }
                     } label: {
-                        Label(isLoading ? "Loading" : "Connect Apple Health", systemImage: "heart.fill")
+                        Label(
+                            isLoading ? NSLocalizedString("Loading", comment: "") : NSLocalizedString("Connect Apple Health", comment: ""),
+                            systemImage: "heart.fill"
+                        )
                             .frame(maxWidth: .infinity)
                     }
                     .buttonStyle(.borderedProminent)
@@ -64,7 +67,12 @@ struct OnboardingView: View {
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
         case .denied(let message):
-            Text("Health access was not granted. \(message)")
+            Text(
+                String(
+                    format: NSLocalizedString("Health access was not granted. %@", comment: ""),
+                    message
+                )
+            )
                 .font(.footnote)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
@@ -76,8 +84,8 @@ struct OnboardingView: View {
 
 private struct OnboardingPoint: View {
     let icon: String
-    let title: String
-    let detail: String
+    let title: LocalizedStringKey
+    let detail: LocalizedStringKey
 
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
