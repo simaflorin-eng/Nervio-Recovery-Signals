@@ -111,7 +111,9 @@ enum L10n {
             "Not requested": "Nesolicitat",
             "Requesting": "Se solicită",
             "Requested": "Solicitat",
-            "Needs review": "Necesită verificare"
+            "Needs review": "Necesită verificare",
+            "Support": "Suport",
+            "Leave a Review": "Lasă un review"
         ],
         "fr": [
             "Today": "Aujourd’hui",
@@ -141,7 +143,9 @@ enum L10n {
             "Not requested": "Non demandé",
             "Requesting": "Demande en cours",
             "Requested": "Demandé",
-            "Needs review": "À vérifier"
+            "Needs review": "À vérifier",
+            "Support": "Support",
+            "Leave a Review": "Laisser un avis"
         ],
         "de": [
             "Today": "Heute",
@@ -171,7 +175,9 @@ enum L10n {
             "Not requested": "Nicht angefordert",
             "Requesting": "Wird angefordert",
             "Requested": "Angefordert",
-            "Needs review": "Überprüfung nötig"
+            "Needs review": "Überprüfung nötig",
+            "Support": "Support",
+            "Leave a Review": "Bewertung abgeben"
         ],
         "es": [
             "Today": "Hoy",
@@ -201,7 +207,9 @@ enum L10n {
             "Not requested": "No solicitado",
             "Requesting": "Solicitando",
             "Requested": "Solicitado",
-            "Needs review": "Requiere revisión"
+            "Needs review": "Requiere revisión",
+            "Support": "Soporte",
+            "Leave a Review": "Dejar una reseña"
         ],
         "it": [
             "Today": "Oggi",
@@ -231,7 +239,9 @@ enum L10n {
             "Not requested": "Non richiesto",
             "Requesting": "Richiesta in corso",
             "Requested": "Richiesto",
-            "Needs review": "Da verificare"
+            "Needs review": "Da verificare",
+            "Support": "Supporto",
+            "Leave a Review": "Lascia una recensione"
         ],
         "pt": [
             "Today": "Hoje",
@@ -261,7 +271,9 @@ enum L10n {
             "Not requested": "Não solicitado",
             "Requesting": "A solicitar",
             "Requested": "Solicitado",
-            "Needs review": "Precisa de revisão"
+            "Needs review": "Precisa de revisão",
+            "Support": "Suporte",
+            "Leave a Review": "Deixar uma avaliação"
         ]
     ]
 
@@ -460,6 +472,7 @@ struct ContentView: View {
     @State private var appModel = NervioAppModel()
     @State private var showReviewPrompt = false
     @Environment(\.openURL) private var openURL
+    @Environment(\.scenePhase) private var scenePhase
 
     private var appTheme: AppTheme {
         AppTheme(rawValue: selectedTheme) ?? .system
@@ -493,6 +506,10 @@ struct ContentView: View {
         .onChange(of: selectedLanguageCode) {
             persistWidgetLanguageSelection()
             appModel.relocalizeDashboard()
+        }
+        .onChange(of: scenePhase) {
+            guard scenePhase == .active, hasCompletedOnboarding else { return }
+            Task { await refreshDashboard() }
         }
         .alert(reviewPromptTitleText, isPresented: $showReviewPrompt) {
             Button(reviewPromptDeclineButtonText, role: .cancel) {}
@@ -738,7 +755,7 @@ final class HealthKitManager {
 
         async let hrvSamples = safeQuantitySamples(identifier: .heartRateVariabilitySDNN, startDate: startDate, endDate: endDate)
         async let restingHeartRateSamples = safeQuantitySamples(identifier: .restingHeartRate, startDate: startDate, endDate: endDate)
-        async let stepSamples = safeQuantitySamples(identifier: .stepCount, startDate: startDate, endDate: endDate)
+        async let stepSamples = safeAppleWatchStepSamples(startDate: startDate, endDate: endDate)
         async let activeEnergySamples = safeQuantitySamples(identifier: .activeEnergyBurned, startDate: startDate, endDate: endDate)
         async let sleepSamples = safeCategorySamples(identifier: .sleepAnalysis, startDate: startDate, endDate: endDate)
         async let mindfulSamples = safeCategorySamples(identifier: .mindfulSession, startDate: startDate, endDate: endDate)
@@ -2057,32 +2074,88 @@ private struct TrendChart: View {
     let points: [TrendPoint]
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: 14) {
             HStack(alignment: .firstTextBaseline) {
-                Text(title).font(.headline.weight(.semibold))
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(title)
+                        .font(.headline.weight(.semibold))
+                    Text(L10n.string("Last 28 days"))
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
                 Spacer()
-                Text(latestValue).font(.subheadline.monospacedDigit()).foregroundStyle(.secondary)
+
+                VStack(alignment: .trailing, spacing: 2) {
+                    Text(latestValue)
+                        .font(.subheadline.monospacedDigit().weight(.semibold))
+                    Text(trendDeltaText)
+                        .font(.caption2.weight(.semibold))
+                        .foregroundStyle(trendDeltaColor)
+                }
             }
+
             if points.isEmpty {
                 Text(L10n.string("No readable data yet"))
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
                     .frame(maxWidth: .infinity, minHeight: 180)
             } else {
-                Chart(points) { point in
-                    LineMark(x: .value(L10n.string("Date"), point.date), y: .value(title, point.value))
-                        .foregroundStyle(color)
-                        .lineStyle(StrokeStyle(lineWidth: 3, lineCap: .round, lineJoin: .round))
-                        .interpolationMethod(.catmullRom)
-                    AreaMark(x: .value(L10n.string("Date"), point.date), y: .value(title, point.value))
-                        .foregroundStyle(
-                            LinearGradient(colors: [color.opacity(0.26), color.opacity(0.03)], startPoint: .top, endPoint: .bottom)
+                let indexedPoints = Array(points.enumerated())
+                Chart(indexedPoints, id: \.element.id) { index, point in
+                    RuleMark(y: .value("Average", averageValue))
+                        .foregroundStyle(.secondary.opacity(0.35))
+                        .lineStyle(StrokeStyle(lineWidth: 1, dash: [4, 4]))
+
+                    BarMark(
+                        x: .value(L10n.string("Date"), index),
+                        yStart: .value(title, yDomain.lowerBound),
+                        yEnd: .value(title, point.value)
+                    )
+                    .clipShape(RoundedRectangle(cornerRadius: 5, style: .continuous))
+                    .foregroundStyle(
+                        LinearGradient(
+                            colors: [color.opacity(0.42), color.opacity(0.95)],
+                            startPoint: .bottom,
+                            endPoint: .top
                         )
-                        .interpolationMethod(.catmullRom)
+                    )
+                    .opacity(point.id == points.last?.id ? 1 : 0.9)
+
+                    if point.id == points.last?.id {
+                        PointMark(x: .value(L10n.string("Date"), index), y: .value(title, point.value))
+                            .foregroundStyle(color)
+                            .symbolSize(26)
+                    }
                 }
-                .chartXAxis { AxisMarks(values: .automatic(desiredCount: 4)) }
-                .chartYAxis { AxisMarks(position: .leading) }
-                .frame(height: 180)
+                .chartYScale(domain: yDomain)
+                .chartXScale(domain: -0.5...Double(max(points.count - 1, 0)) + 0.5)
+                .chartXAxis {
+                    AxisMarks(values: .automatic(desiredCount: 5)) { value in
+                        AxisGridLine(stroke: StrokeStyle(lineWidth: 0.6, dash: [2, 4]))
+                            .foregroundStyle(.white.opacity(0.12))
+                        AxisTick(stroke: StrokeStyle(lineWidth: 0.7))
+                            .foregroundStyle(.secondary.opacity(0.45))
+                        AxisValueLabel()
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                .chartYAxis {
+                    AxisMarks(position: .leading) { value in
+                        AxisGridLine(stroke: StrokeStyle(lineWidth: 0.6, dash: [2, 4]))
+                            .foregroundStyle(.white.opacity(0.12))
+                        AxisTick(stroke: StrokeStyle(lineWidth: 0.7))
+                            .foregroundStyle(.secondary.opacity(0.45))
+                        AxisValueLabel()
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                .chartPlotStyle { plotArea in
+                    plotArea
+                        .background(.white.opacity(0.05), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+                }
+                .frame(height: 205)
             }
         }
         .nervioCard(tint: color, padding: 16)
@@ -2092,6 +2165,35 @@ private struct TrendChart: View {
         guard let value = points.last?.value else { return "--" }
         return "\(String(format: "%.1f", value)) \(unit)"
     }
+
+    private var averageValue: Double {
+        let values = points.map(\.value)
+        guard !values.isEmpty else { return 0 }
+        return values.reduce(0, +) / Double(values.count)
+    }
+
+    private var trendDeltaText: String {
+        guard let first = points.first?.value, let last = points.last?.value else { return "—" }
+        let delta = last - first
+        let sign = delta >= 0 ? "+" : ""
+        return "\(sign)\(String(format: "%.1f", delta)) \(unit)"
+    }
+
+    private var trendDeltaColor: Color {
+        guard let first = points.first?.value, let last = points.last?.value else { return .secondary }
+        let delta = last - first
+        if abs(delta) < 0.001 { return .secondary }
+        return delta > 0 ? .green : .orange
+    }
+
+    private var yDomain: ClosedRange<Double> {
+        let values = points.map(\.value)
+        guard let minValue = values.min(), let maxValue = values.max() else { return 0...1 }
+        let spread = max(maxValue - minValue, maxValue == 0 ? 1 : abs(maxValue) * 0.15)
+        let padding = spread * 0.22
+        return (minValue - padding)...(maxValue + padding)
+    }
+
 }
 
 struct PrivacySettingsView: View {

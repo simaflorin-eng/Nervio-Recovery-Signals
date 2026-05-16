@@ -122,8 +122,9 @@ struct NervioComplicationProvider: TimelineProvider {
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<NervioComplicationEntry>) -> Void) {
         let entry = NervioComplicationEntry(date: .now, signal: signal, snapshot: NervioComplicationSnapshotStore.load())
-        // Ask WidgetKit for a fresh timeline more often so steps refresh sooner.
-        let refreshDate = Calendar.current.date(byAdding: .minute, value: 5, to: .now) ?? .now.addingTimeInterval(300)
+        // Steps can change frequently; recovery/stress are less volatile.
+        let refreshMinutes = signal == .steps ? 1 : 5
+        let refreshDate = Calendar.current.date(byAdding: .minute, value: refreshMinutes, to: .now) ?? .now.addingTimeInterval(TimeInterval(refreshMinutes * 60))
         completion(Timeline(entries: [entry], policy: .after(refreshDate)))
     }
 }

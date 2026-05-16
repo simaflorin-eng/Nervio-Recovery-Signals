@@ -7,6 +7,7 @@ final class HealthKitManager: ObservableObject {
 
     private let healthStore = HKHealthStore()
     private let calendar = Calendar.current
+    private var observerQueries: [HKObserverQuery] = []
 
     var isHealthDataAvailable: Bool {
         HKHealthStore.isHealthDataAvailable()
@@ -23,9 +24,45 @@ final class HealthKitManager: ObservableObject {
         do {
             try await healthStore.requestAuthorization(toShare: Set<HKSampleType>(), read: Self.readTypes)
             permissionState = .authorized
+            enableBackgroundDelivery()
         } catch {
             permissionState = .denied(error.localizedDescription)
         }
+    }
+
+    func startObservingHealthUpdates(onUpdate: @escaping @MainActor () -> Void) {
+        guard isHealthDataAvailable else { return }
+        guard observerQueries.isEmpty else { return }
+
+        let identifiers: [HKQuantityTypeIdentifier] = [
+            .stepCount,
+            .activeEnergyBurned,
+            .heartRateVariabilitySDNN,
+            .restingHeartRate
+        ]
+
+        for identifier in identifiers {
+            guard let quantityType = HKObjectType.quantityType(forIdentifier: identifier) else { continue }
+
+            let query = HKObserverQuery(sampleType: quantityType, predicate: nil) { [weak self] _, _, completionHandler, _ in
+                defer { completionHandler() }
+                guard self != nil else { return }
+                Task { @MainActor in
+                    onUpdate()
+                }
+            }
+
+            observerQueries.append(query)
+            healthStore.execute(query)
+            healthStore.enableBackgroundDelivery(for: quantityType, frequency: .immediate) { _, _ in }
+        }
+    }
+
+    func stopObservingHealthUpdates() {
+        for query in observerQueries {
+            healthStore.stop(query)
+        }
+        observerQueries.removeAll()
     }
 
     func fetchDailySummaries(days: Int = 28) async throws -> [DailyHealthSummary] {
@@ -76,6 +113,22 @@ final class HealthKitManager: ObservableObject {
         types.insert(HKObjectType.categoryType(forIdentifier: .mindfulSession)!)
         types.insert(HKObjectType.workoutType())
         return types
+    }
+
+    private func enableBackgroundDelivery() {
+        guard isHealthDataAvailable else { return }
+
+        let identifiers: [HKQuantityTypeIdentifier] = [
+            .stepCount,
+            .activeEnergyBurned,
+            .heartRateVariabilitySDNN,
+            .restingHeartRate
+        ]
+
+        for identifier in identifiers {
+            guard let quantityType = HKObjectType.quantityType(forIdentifier: identifier) else { continue }
+            healthStore.enableBackgroundDelivery(for: quantityType, frequency: .immediate) { _, _ in }
+        }
     }
 
     private func quantitySamples(identifier: HKQuantityTypeIdentifier, startDate: Date, endDate: Date) async throws -> [HKQuantitySample] {

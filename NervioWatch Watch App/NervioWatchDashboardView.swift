@@ -2,6 +2,7 @@ import SwiftUI
 
 struct NervioWatchDashboardView: View {
     @StateObject private var session = WatchNervioSession()
+    @Environment(\.scenePhase) private var scenePhase
 
     var body: some View {
         TimelineView(.periodic(from: .now, by: 60)) { context in
@@ -40,6 +41,15 @@ struct NervioWatchDashboardView: View {
             }
             .containerBackground(.black, for: .navigation)
             .task(id: context.date) {
+                await session.refreshStepsFromWatch()
+            }
+        }
+        .task {
+            await session.refreshStepsFromWatch()
+        }
+        .onChange(of: scenePhase) {
+            guard scenePhase == .active else { return }
+            Task {
                 await session.refreshStepsFromWatch()
             }
         }
