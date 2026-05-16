@@ -345,6 +345,46 @@ struct NervioStepsComplication: Widget {
     }
 }
 
+// Legacy kinds kept to update already-installed complications created before v2 kinds.
+struct NervioRecoveryComplicationLegacy: Widget {
+    let kind = "nervio_watch_recovery_complication"
+
+    var body: some WidgetConfiguration {
+        StaticConfiguration(kind: kind, provider: NervioComplicationProvider(signal: .recovery)) { entry in
+            NervioComplicationEntryView(entry: entry)
+        }
+        .configurationDisplayName("Nervio Recovery")
+        .description("Shows your latest recovery signal.")
+        .supportedFamilies([.accessoryCircular, .accessoryRectangular, .accessoryInline])
+    }
+}
+
+struct NervioStressComplicationLegacy: Widget {
+    let kind = "nervio_watch_stress_complication"
+
+    var body: some WidgetConfiguration {
+        StaticConfiguration(kind: kind, provider: NervioComplicationProvider(signal: .stress)) { entry in
+            NervioComplicationEntryView(entry: entry)
+        }
+        .configurationDisplayName("Nervio Stress")
+        .description("Shows your latest stress and load signal.")
+        .supportedFamilies([.accessoryCircular, .accessoryRectangular, .accessoryInline])
+    }
+}
+
+struct NervioStepsComplicationLegacy: Widget {
+    let kind = "nervio_watch_steps_complication"
+
+    var body: some WidgetConfiguration {
+        StaticConfiguration(kind: kind, provider: NervioComplicationProvider(signal: .steps)) { entry in
+            NervioComplicationEntryView(entry: entry)
+        }
+        .configurationDisplayName("Nervio Steps")
+        .description("Shows today's steps.")
+        .supportedFamilies([.accessoryCircular, .accessoryRectangular, .accessoryInline])
+    }
+}
+
 #Preview(as: .accessoryCircular) {
     NervioRecoveryComplication()
 } timeline: {

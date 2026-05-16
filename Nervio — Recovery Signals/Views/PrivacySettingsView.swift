@@ -4,6 +4,8 @@ struct PrivacySettingsView: View {
     let permissionState: HealthPermissionState
     let onRequestAccess: () async -> Void
     let onResetOnboarding: () -> Void
+    @AppStorage("hasAcceptedReviewPrompt") private var hasAcceptedReviewPrompt = false
+    @Environment(\.openURL) private var openURL
 
     var body: some View {
         NavigationStack {
@@ -33,6 +35,15 @@ struct PrivacySettingsView: View {
                     Button(L10n.string("Show Onboarding Again"), action: onResetOnboarding)
                 }
 
+                Section(L10n.string("Support")) {
+                    Button {
+                        hasAcceptedReviewPrompt = true
+                        openAppStoreReview()
+                    } label: {
+                        Label(L10n.string("Leave a Review"), systemImage: "star.bubble")
+                    }
+                }
+
                 Section {
                     Text(L10n.string("Nervio estimates wellness-oriented recovery signals from available Apple Health data. It does not diagnose stress, burnout, illness, or any medical condition."))
                         .font(.footnote)
@@ -51,6 +62,11 @@ struct PrivacySettingsView: View {
         case .authorized: L10n.string("Requested")
         case .denied: L10n.string("Needs review")
         }
+    }
+
+    private func openAppStoreReview() {
+        guard let reviewURL = AppStoreReviewLink.writeReviewURL else { return }
+        openURL(reviewURL)
     }
 }
 

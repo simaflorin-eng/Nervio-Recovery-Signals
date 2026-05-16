@@ -7,5 +7,8 @@ struct NervioWatch_ComplicationsBundle: WidgetBundle {
         NervioRecoveryComplication()
         NervioStressComplication()
         NervioStepsComplication()
+        NervioRecoveryComplicationLegacy()
+        NervioStressComplicationLegacy()
+        NervioStepsComplicationLegacy()
     }
 }

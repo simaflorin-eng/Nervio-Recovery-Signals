@@ -454,8 +454,12 @@ struct ContentView: View {
     @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
     @AppStorage("selectedLanguageCode") private var selectedLanguageCode = AppLanguage.system.rawValue
     @AppStorage("selectedTheme") private var selectedTheme = AppTheme.system.rawValue
+    @AppStorage("reviewLaunchCount") private var reviewLaunchCount = 0
+    @AppStorage("hasAcceptedReviewPrompt") private var hasAcceptedReviewPrompt = false
     @State private var healthKitManager = HealthKitManager()
     @State private var appModel = NervioAppModel()
+    @State private var showReviewPrompt = false
+    @Environment(\.openURL) private var openURL
 
     private var appTheme: AppTheme {
         AppTheme(rawValue: selectedTheme) ?? .system
@@ -490,7 +494,17 @@ struct ContentView: View {
             persistWidgetLanguageSelection()
             appModel.relocalizeDashboard()
         }
+        .alert(reviewPromptTitleText, isPresented: $showReviewPrompt) {
+            Button(reviewPromptDeclineButtonText, role: .cancel) {}
+            Button(reviewPromptAcceptButtonText) {
+                hasAcceptedReviewPrompt = true
+                openAppStoreReview()
+            }
+        } message: {
+            Text(reviewPromptMessageText)
+        }
         .task {
+            handleReviewPromptIfNeeded()
             persistWidgetLanguageSelection()
             guard hasCompletedOnboarding else { return }
             await refreshDashboard()
@@ -514,6 +528,68 @@ struct ContentView: View {
 
     private func refreshDashboard() async {
         await appModel.loadDashboard(using: healthKitManager)
+    }
+
+    private func handleReviewPromptIfNeeded() {
+        guard !hasAcceptedReviewPrompt else { return }
+
+        reviewLaunchCount += 1
+        if reviewLaunchCount.isMultiple(of: 8) {
+            showReviewPrompt = true
+        }
+    }
+
+    private func openAppStoreReview() {
+        guard let reviewURL = AppStoreReviewLink.writeReviewURL else { return }
+        openURL(reviewURL)
+    }
+
+    private var reviewPromptTitleText: String {
+        switch selectedLanguageCode {
+        case AppLanguage.ro.rawValue: "Îți place aplicația Nervio?"
+        case AppLanguage.fr.rawValue: "Vous aimez l’app Nervio ?"
+        case AppLanguage.de.rawValue: "Gefällt dir die Nervio-App?"
+        case AppLanguage.es.rawValue: "¿Te gusta la app Nervio?"
+        case AppLanguage.it.rawValue: "Ti piace l’app Nervio?"
+        case AppLanguage.pt.rawValue: "Gostas da app Nervio?"
+        default: "Do you like the Nervio app?"
+        }
+    }
+
+    private var reviewPromptMessageText: String {
+        switch selectedLanguageCode {
+        case AppLanguage.ro.rawValue: "Ne-ar ajuta mult un review în App Store."
+        case AppLanguage.fr.rawValue: "Un avis sur l’App Store nous aiderait beaucoup."
+        case AppLanguage.de.rawValue: "Eine Bewertung im App Store würde uns sehr helfen."
+        case AppLanguage.es.rawValue: "Una reseña en App Store nos ayudaría mucho."
+        case AppLanguage.it.rawValue: "Una recensione sull’App Store ci aiuterebbe molto."
+        case AppLanguage.pt.rawValue: "Uma avaliação na App Store ajudar-nos-ia muito."
+        default: "A review on the App Store would help us a lot."
+        }
+    }
+
+    private var reviewPromptAcceptButtonText: String {
+        switch selectedLanguageCode {
+        case AppLanguage.ro.rawValue: "Da, las review"
+        case AppLanguage.fr.rawValue: "Oui, laisser un avis"
+        case AppLanguage.de.rawValue: "Ja, Bewertung abgeben"
+        case AppLanguage.es.rawValue: "Sí, dejar reseña"
+        case AppLanguage.it.rawValue: "Sì, lascia una recensione"
+        case AppLanguage.pt.rawValue: "Sim, deixar avaliação"
+        default: "Yes, leave a review"
+        }
+    }
+
+    private var reviewPromptDeclineButtonText: String {
+        switch selectedLanguageCode {
+        case AppLanguage.ro.rawValue: "Nu acum"
+        case AppLanguage.fr.rawValue: "Pas maintenant"
+        case AppLanguage.de.rawValue: "Jetzt nicht"
+        case AppLanguage.es.rawValue: "Ahora no"
+        case AppLanguage.it.rawValue: "Non ora"
+        case AppLanguage.pt.rawValue: "Agora não"
+        default: "Not now"
+        }
     }
 }
 
@@ -2022,6 +2098,8 @@ struct PrivacySettingsView: View {
     let permissionState: HealthPermissionState
     let onRequestAccess: () async -> Void
     let onResetOnboarding: () -> Void
+    @AppStorage("hasAcceptedReviewPrompt") private var hasAcceptedReviewPrompt = false
+    @Environment(\.openURL) private var openURL
 
     var body: some View {
         NavigationStack {
@@ -2045,6 +2123,14 @@ struct PrivacySettingsView: View {
                     Section(L10n.string("Onboarding")) {
                         Button(L10n.string("Show Onboarding Again"), action: onResetOnboarding)
                     }
+                    Section(L10n.string("Support")) {
+                        Button {
+                            hasAcceptedReviewPrompt = true
+                            openAppStoreReview()
+                        } label: {
+                            Label(L10n.string("Leave a Review"), systemImage: "star.bubble")
+                        }
+                    }
                     Section {
                         Text(L10n.string("Nervio estimates wellness-oriented recovery signals from available Apple Health data. It does not diagnose stress, burnout, illness, or any medical condition."))
                             .font(.footnote)
@@ -2065,6 +2151,11 @@ struct PrivacySettingsView: View {
         case .authorized: L10n.string("Requested")
         case .denied: L10n.string("Needs review")
         }
+    }
+
+    private func openAppStoreReview() {
+        guard let reviewURL = AppStoreReviewLink.writeReviewURL else { return }
+        openURL(reviewURL)
     }
 }
 
