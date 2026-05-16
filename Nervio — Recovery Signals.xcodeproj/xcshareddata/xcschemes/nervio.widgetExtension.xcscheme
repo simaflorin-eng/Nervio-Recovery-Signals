@@ -16,7 +16,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "86FE42E92FB309B70089F00F"
+               BlueprintIdentifier = "86D765C72FB7572600870192"
                BuildableName = "nervio.widgetExtension.appex"
                BlueprintName = "nervio.widgetExtension"
                ReferencedContainer = "container:Nervio &#x2014; Recovery Signals.xcodeproj">
@@ -63,7 +63,7 @@
          BundleIdentifier = "com.apple.springboard">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "86FE42E92FB309B70089F00F"
+            BlueprintIdentifier = "86D765C72FB7572600870192"
             BuildableName = "nervio.widgetExtension.appex"
             BlueprintName = "nervio.widgetExtension"
             ReferencedContainer = "container:Nervio &#x2014; Recovery Signals.xcodeproj">

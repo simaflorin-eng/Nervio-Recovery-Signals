@@ -2,7 +2,7 @@
 //  nervio_widgetLiveActivity.swift
 //  nervio.widget
 //
-//  Created by Florin Sima on 12/05/2026.
+//  Created by Florin Sima on 15/05/2026.
 //
 
 import ActivityKit

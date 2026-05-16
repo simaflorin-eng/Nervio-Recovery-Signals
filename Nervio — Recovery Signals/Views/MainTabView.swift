@@ -16,12 +16,12 @@ struct MainTabView: View {
                 onRefresh: onRefresh
             )
             .tabItem {
-                Label("Today", systemImage: "gauge.with.dots.needle.67percent")
+                Label(L10n.string("Today"), systemImage: "gauge.with.dots.needle.67percent")
             }
 
             TrendsView(dashboardState: appModel.dashboardState)
                 .tabItem {
-                    Label("Trends", systemImage: "chart.xyaxis.line")
+                    Label(L10n.string("Trends"), systemImage: "chart.xyaxis.line")
                 }
 
             PrivacySettingsView(
@@ -33,7 +33,7 @@ struct MainTabView: View {
                 onResetOnboarding: onResetOnboarding
             )
             .tabItem {
-                Label("Privacy", systemImage: "lock.shield")
+                Label(L10n.string("Privacy"), systemImage: "lock.shield")
             }
         }
     }

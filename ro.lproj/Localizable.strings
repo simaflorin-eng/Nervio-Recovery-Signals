@@ -91,3 +91,16 @@
 "System" = "Sistem";
 "Light" = "Luminos";
 "Dark" = "Întunecat";
+"widget.updated" = "Actualizat";
+"widget.recovery" = "Recuperare";
+"widget.stress" = "Stres";
+"widget.recovery_score" = "Scor recuperare";
+"widget.stress_score" = "Scor stres";
+"widget.load" = "Încărcare";
+"widget.rec_short" = "Rec";
+"widget.config.recovery.title" = "Nervio Recuperare";
+"widget.config.recovery.desc" = "Scor recuperare, context și indicatori cheie.";
+"widget.config.stress.title" = "Nervio Stres";
+"widget.config.stress.desc" = "Scor stres/încărcare, context și indicatori cheie.";
+
+"widget.steps" = "Pași Apple Watch";

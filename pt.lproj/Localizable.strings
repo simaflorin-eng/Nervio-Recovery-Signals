@@ -91,3 +91,16 @@
 "Nervio needs several days of Apple Health data before estimating a recovery signal." = "O Nervio precisa de vários dias de dados do Apple Health antes de estimar um sinal de recuperação.";
 "Nervio needs several days of Apple Health data before estimating physiological load." = "O Nervio precisa de vários dias de dados do Apple Health antes de estimar a carga fisiológica.";
 "Nervio estimates wellness-oriented recovery signals from available Apple Health data. It does not diagnose stress, burnout, illness, or any medical condition." = "O Nervio estima sinais de recuperação orientados para bem-estar a partir dos dados disponíveis do Apple Health. Não diagnostica stress, burnout, doença ou qualquer condição médica.";
+"widget.updated" = "Atualizado";
+"widget.recovery" = "Recuperação";
+"widget.stress" = "Estresse";
+"widget.recovery_score" = "Pontuação recuperação";
+"widget.stress_score" = "Pontuação estresse";
+"widget.load" = "Carga";
+"widget.rec_short" = "Rec";
+"widget.config.recovery.title" = "Nervio Recuperação";
+"widget.config.recovery.desc" = "Pontuação de recuperação, contexto e indicadores-chave.";
+"widget.config.stress.title" = "Nervio Estresse";
+"widget.config.stress.desc" = "Pontuação de estresse/carga, contexto e indicadores-chave.";
+
+"widget.steps" = "Passos Apple Watch";

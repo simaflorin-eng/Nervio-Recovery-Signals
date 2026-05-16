@@ -21,6 +21,10 @@ struct WatchNervioSnapshot: Codable, Hashable {
     let steps: WatchNervioMetric
     let stepsValue: Int?
     let updatedAt: Date
+    let languageCode: String?
+    let recoveryLabel: String?
+    let stressLabel: String?
+    let stepsLabel: String?
 
     static let preview = WatchNervioSnapshot(
         recoveryValue: 74,
@@ -31,9 +35,13 @@ struct WatchNervioSnapshot: Codable, Hashable {
         hrv: WatchNervioMetric(title: "HRV", value: "54 ms", symbolName: "waveform.path.ecg"),
         restingHeartRate: WatchNervioMetric(title: "Resting HR", value: "58 bpm", symbolName: "heart"),
         sleep: WatchNervioMetric(title: "Sleep", value: "7.2 h", symbolName: "bed.double"),
-        steps: WatchNervioMetric(title: "Apple Watch Steps", value: "12,430", symbolName: "figure.walk"),
+        steps: WatchNervioMetric(title: "Steps", value: "12,430", symbolName: "figure.walk"),
         stepsValue: 12430,
-        updatedAt: .now
+        updatedAt: .now,
+        languageCode: "en",
+        recoveryLabel: "Recovery",
+        stressLabel: "Stress",
+        stepsLabel: "Steps"
     )
 }
 
@@ -71,9 +79,13 @@ extension WatchNervioSnapshot {
             hrv: hrv,
             restingHeartRate: restingHeartRate,
             sleep: sleep,
-            steps: WatchNervioMetric(title: "Apple Watch Steps", value: Self.stepsFormatter.string(from: NSNumber(value: stepsValue)) ?? "\(stepsValue)", symbolName: "figure.walk"),
+            steps: WatchNervioMetric(title: "Steps", value: Self.stepsFormatter.string(from: NSNumber(value: stepsValue)) ?? "\(stepsValue)", symbolName: "figure.walk"),
             stepsValue: stepsValue,
-            updatedAt: .now
+            updatedAt: .now,
+            languageCode: languageCode,
+            recoveryLabel: recoveryLabel,
+            stressLabel: stressLabel,
+            stepsLabel: stepsLabel
         )
     }
 

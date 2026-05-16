@@ -1,0 +1,12 @@
+"widget.updated" = "Updated";
+"widget.recovery" = "Recovery";
+"widget.stress" = "Stress";
+"widget.recovery_score" = "Recovery Score";
+"widget.stress_score" = "Stress Score";
+"widget.load" = "Load";
+"widget.rec_short" = "Rec";
+"widget.steps" = "Steps";
+"widget.config.recovery.title" = "Nervio Recovery";
+"widget.config.recovery.desc" = "Recovery score, context and key inputs.";
+"widget.config.stress.title" = "Nervio Stress";
+"widget.config.stress.desc" = "Stress/load score, context and key inputs.";

@@ -18,7 +18,7 @@ struct TrendsView: View {
                     )
 
                     TrendChart(
-                        title: "Resting heart rate",
+                        title: L10n.string("Resting heart rate"),
                         unit: "bpm",
                         color: .pink,
                         points: dashboardState.history.compactMap { summary in
@@ -27,7 +27,7 @@ struct TrendsView: View {
                     )
 
                     TrendChart(
-                        title: "Sleep",
+                        title: L10n.string("Sleep"),
                         unit: "hours",
                         color: .indigo,
                         points: dashboardState.history.compactMap { summary in
@@ -35,14 +35,14 @@ struct TrendsView: View {
                         }
                     )
 
-                    Text("Trends compare available Apple Health samples over time. Missing points usually mean no readable data was available for that day.")
+                    Text(L10n.string("Trends compare available Apple Health samples over time. Missing points usually mean no readable data was available for that day."))
                         .font(.footnote)
                         .foregroundStyle(.secondary)
                 }
                 .padding(20)
             }
             .background(Color(.systemGroupedBackground))
-            .navigationTitle("Trends")
+            .navigationTitle(L10n.string("Trends"))
         }
     }
 }
@@ -71,21 +71,21 @@ private struct TrendChart: View {
             }
 
             if points.isEmpty {
-                Text("No readable data yet")
+                Text(L10n.string("No readable data yet"))
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
                     .frame(maxWidth: .infinity, minHeight: 180)
             } else {
                 Chart(points) { point in
                     LineMark(
-                        x: .value("Date", point.date),
+                        x: .value(L10n.string("Date"), point.date),
                         y: .value(title, point.value)
                     )
                     .foregroundStyle(color)
                     .interpolationMethod(.catmullRom)
 
                     AreaMark(
-                        x: .value("Date", point.date),
+                        x: .value(L10n.string("Date"), point.date),
                         y: .value(title, point.value)
                     )
                     .foregroundStyle(color.opacity(0.12))
@@ -106,7 +106,7 @@ private struct TrendChart: View {
 
     private var latestValue: String {
         guard let value = points.last?.value else { return "--" }
-        return "\(String(format: "%.1f", value)) \(NSLocalizedString(unit, comment: ""))"
+        return "\(String(format: "%.1f", value)) \(L10n.string(unit))"
     }
 }
 

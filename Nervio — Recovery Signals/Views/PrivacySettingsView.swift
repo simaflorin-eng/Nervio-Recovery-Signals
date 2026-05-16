@@ -8,15 +8,15 @@ struct PrivacySettingsView: View {
     var body: some View {
         NavigationStack {
             List {
-                Section("Privacy") {
+                Section(L10n.string("Privacy")) {
                     SettingsRow(icon: "iphone", title: "On-device only", detail: "Health data is read locally on this iPhone.")
                     SettingsRow(icon: "icloud.slash", title: "No cloud backend", detail: "Nervio does not use accounts, Firebase, Supabase, analytics SDKs, or external API calls.")
                     SettingsRow(icon: "square.and.pencil", title: "Read-only", detail: "Nervio does not write data to Apple Health.")
                 }
 
-                Section("Apple Health") {
+                Section(L10n.string("Apple Health")) {
                     HStack {
-                        Label("Permission", systemImage: "heart.text.square")
+                        Label(L10n.string("Permission"), systemImage: "heart.text.square")
                         Spacer()
                         Text(permissionLabel)
                             .foregroundStyle(.secondary)
@@ -25,31 +25,31 @@ struct PrivacySettingsView: View {
                     Button {
                         Task { await onRequestAccess() }
                     } label: {
-                        Label("Request Health Access", systemImage: "heart.fill")
+                        Label(L10n.string("Request Health Access"), systemImage: "heart.fill")
                     }
                 }
 
-                Section("Onboarding") {
-                    Button("Show Onboarding Again", action: onResetOnboarding)
+                Section(L10n.string("Onboarding")) {
+                    Button(L10n.string("Show Onboarding Again"), action: onResetOnboarding)
                 }
 
                 Section {
-                    Text("Nervio estimates wellness-oriented recovery signals from available Apple Health data. It does not diagnose stress, burnout, illness, or any medical condition.")
+                    Text(L10n.string("Nervio estimates wellness-oriented recovery signals from available Apple Health data. It does not diagnose stress, burnout, illness, or any medical condition."))
                         .font(.footnote)
                         .foregroundStyle(.secondary)
                 }
             }
-            .navigationTitle("Privacy")
+            .navigationTitle(L10n.string("Privacy"))
         }
     }
 
     private var permissionLabel: String {
         switch permissionState {
-        case .notDetermined: NSLocalizedString("Not requested", comment: "")
-        case .unavailable: NSLocalizedString("Unavailable", comment: "")
-        case .requesting: NSLocalizedString("Requesting", comment: "")
-        case .authorized: NSLocalizedString("Requested", comment: "")
-        case .denied: NSLocalizedString("Needs review", comment: "")
+        case .notDetermined: L10n.string("Not requested")
+        case .unavailable: L10n.string("Unavailable")
+        case .requesting: L10n.string("Requesting")
+        case .authorized: L10n.string("Requested")
+        case .denied: L10n.string("Needs review")
         }
     }
 }

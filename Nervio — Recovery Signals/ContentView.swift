@@ -487,12 +487,23 @@ struct ContentView: View {
         .id(selectedLanguageCode)
         .preferredColorScheme(appTheme.colorScheme)
         .onChange(of: selectedLanguageCode) {
+            persistWidgetLanguageSelection()
             appModel.relocalizeDashboard()
         }
         .task {
+            persistWidgetLanguageSelection()
             guard hasCompletedOnboarding else { return }
             await refreshDashboard()
         }
+    }
+
+    private func persistWidgetLanguageSelection() {
+        let appGroupIdentifier = "group.com.florinsima.Nervio-Recovery-Signals"
+        let key = "selectedLanguageCode"
+        (UserDefaults(suiteName: appGroupIdentifier) ?? .standard).set(selectedLanguageCode, forKey: key)
+        WidgetCenter.shared.reloadAllTimelines()
+        WidgetCenter.shared.reloadTimelines(ofKind: "nervio_recovery_widget")
+        WidgetCenter.shared.reloadTimelines(ofKind: "nervio_stress_widget")
     }
 
     private func completeOnboardingWithHealthAccess() async {
@@ -651,7 +662,7 @@ final class HealthKitManager {
 
         async let hrvSamples = safeQuantitySamples(identifier: .heartRateVariabilitySDNN, startDate: startDate, endDate: endDate)
         async let restingHeartRateSamples = safeQuantitySamples(identifier: .restingHeartRate, startDate: startDate, endDate: endDate)
-        async let stepSamples = safeAppleWatchStepSamples(startDate: startDate, endDate: endDate)
+        async let stepSamples = safeQuantitySamples(identifier: .stepCount, startDate: startDate, endDate: endDate)
         async let activeEnergySamples = safeQuantitySamples(identifier: .activeEnergyBurned, startDate: startDate, endDate: endDate)
         async let sleepSamples = safeCategorySamples(identifier: .sleepAnalysis, startDate: startDate, endDate: endDate)
         async let mindfulSamples = safeCategorySamples(identifier: .mindfulSession, startDate: startDate, endDate: endDate)
@@ -759,7 +770,7 @@ final class HealthKitManager {
         mindfulSamples: [HKCategorySample],
         workoutSamples: [HKWorkout]
     ) -> [DailyHealthSummary] {
-        days(from: startDate, through: endDate).map { day in
+        var summaries = days(from: startDate, through: endDate).map { day in
             let interval = dayInterval(for: day)
             return DailyHealthSummary(
                 date: day,
@@ -773,6 +784,28 @@ final class HealthKitManager {
                 mindfulMinutes: minutes(from: mindfulSamples, in: interval)
             )
         }
+
+        // If today's resting HR is missing, keep UI populated with the most recent
+        // reading from the last 24h to avoid empty dashboard cards in the morning.
+        if let todayIndex = summaries.indices.last, summaries[todayIndex].restingHeartRate == nil {
+            let lookbackStart = calendar.date(byAdding: .day, value: -1, to: summaries[todayIndex].date) ?? summaries[todayIndex].date
+            let candidateSamples = restingHeartRateSamples.filter { $0.startDate >= lookbackStart && $0.startDate <= endDate }
+            if let latest = candidateSamples.max(by: { $0.startDate < $1.startDate }) {
+                summaries[todayIndex] = DailyHealthSummary(
+                    date: summaries[todayIndex].date,
+                    hrvMilliseconds: summaries[todayIndex].hrvMilliseconds,
+                    restingHeartRate: latest.quantity.doubleValue(for: HKUnit.count().unitDivided(by: .minute())),
+                    sleepHours: summaries[todayIndex].sleepHours,
+                    sleepEfficiency: summaries[todayIndex].sleepEfficiency,
+                    stepCount: summaries[todayIndex].stepCount,
+                    activeEnergyKilocalories: summaries[todayIndex].activeEnergyKilocalories,
+                    workoutMinutes: summaries[todayIndex].workoutMinutes,
+                    mindfulMinutes: summaries[todayIndex].mindfulMinutes
+                )
+            }
+        }
+
+        return summaries
     }
 
     private func days(from startDate: Date, through endDate: Date) -> [Date] {
@@ -1314,12 +1347,16 @@ private extension NervioWidgetSnapshot {
                 symbolName: "bed.double"
             ),
             steps: NervioWidgetMetric(
-                title: L10n.string("Apple Watch Steps"),
+                title: L10n.string("Steps"),
                 value: today?.stepCount.map { Self.stepsFormatter.string(from: NSNumber(value: Int($0.rounded()))) ?? "\(Int($0.rounded()))" } ?? "--",
                 symbolName: "figure.walk"
             ),
             stepsValue: today?.stepCount.map { Int($0.rounded()) },
-            updatedAt: .now
+            updatedAt: .now,
+            languageCode: UserDefaults.standard.string(forKey: "selectedLanguageCode"),
+            recoveryLabel: L10n.string("Recovery"),
+            stressLabel: L10n.string("Stress"),
+            stepsLabel: L10n.string("Steps")
         )
     }
 
@@ -1734,7 +1771,7 @@ private struct TodayMetricsView: View {
                 MetricTile(title: L10n.string("HRV"), value: summary?.hrvMilliseconds.map { "\(Int($0.rounded())) ms" } ?? "--", icon: "waveform.path.ecg", tint: .teal)
                 MetricTile(title: L10n.string("Resting HR"), value: summary?.restingHeartRate.map { "\(Int($0.rounded())) bpm" } ?? "--", icon: "heart", tint: .pink)
                 MetricTile(title: L10n.string("Sleep"), value: summary?.sleepHours.map { String(format: "%.1f h", $0) } ?? "--", icon: "bed.double", tint: .indigo)
-                MetricTile(title: L10n.string("Apple Watch Steps"), value: summary?.stepCount.map { Self.stepsFormatter.string(from: NSNumber(value: Int($0.rounded()))) ?? "\(Int($0.rounded()))" } ?? "--", icon: "figure.walk", tint: .green)
+                MetricTile(title: L10n.string("Steps"), value: summary?.stepCount.map { Self.stepsFormatter.string(from: NSNumber(value: Int($0.rounded()))) ?? "\(Int($0.rounded()))" } ?? "--", icon: "figure.walk", tint: .green)
             }
 
             ActivityLoadCard(activityLoad: activityLoad)
@@ -1763,7 +1800,7 @@ private struct ActivityLoadCard: View {
                 VStack(alignment: .leading, spacing: 3) {
                     Text(L10n.string("Activity Load"))
                         .font(.subheadline.weight(.semibold))
-                    Text(activityLoad?.label ?? L10n.string("No Apple Watch step data available."))
+                    Text(activityLoad?.label ?? L10n.string("No step data available."))
                         .font(.footnote)
                         .foregroundStyle(.secondary)
                 }
@@ -1916,7 +1953,7 @@ struct TrendsView: View {
                         TrendChart(title: L10n.string("HRV"), unit: L10n.string("ms"), color: .teal, points: dashboardState.history.compactMap { summary in summary.hrvMilliseconds.map { TrendPoint(date: summary.date, value: $0) } })
                         TrendChart(title: L10n.string("Resting heart rate"), unit: L10n.string("bpm"), color: .pink, points: dashboardState.history.compactMap { summary in summary.restingHeartRate.map { TrendPoint(date: summary.date, value: $0) } })
                         TrendChart(title: L10n.string("Sleep"), unit: L10n.string("hours"), color: .indigo, points: dashboardState.history.compactMap { summary in summary.sleepHours.map { TrendPoint(date: summary.date, value: $0) } })
-                        TrendChart(title: L10n.string("Apple Watch Steps"), unit: L10n.string("steps"), color: .green, points: dashboardState.history.compactMap { summary in summary.stepCount.map { TrendPoint(date: summary.date, value: $0) } })
+                        TrendChart(title: L10n.string("Steps"), unit: L10n.string("steps"), color: .green, points: dashboardState.history.compactMap { summary in summary.stepCount.map { TrendPoint(date: summary.date, value: $0) } })
                         Text(L10n.string("Trends compare available Apple Health samples over time. Missing points usually mean no readable data was available for that day."))
                             .font(.footnote)
                             .foregroundStyle(.secondary)

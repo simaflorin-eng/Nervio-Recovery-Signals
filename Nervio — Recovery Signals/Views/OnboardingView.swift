@@ -16,19 +16,19 @@ struct OnboardingView: View {
                         .font(.system(size: 48, weight: .semibold))
                         .foregroundStyle(.teal)
 
-                    Text("Nervio")
+                    Text(L10n.string("Nervio"))
                         .font(.largeTitle.bold())
 
-                    Text("Recovery and nervous system insights based on available Apple Health data.")
+                    Text(L10n.string("Recovery and nervous system insights based on available Apple Health data."))
                         .font(.title3)
                         .foregroundStyle(.secondary)
                         .fixedSize(horizontal: false, vertical: true)
                 }
 
                 VStack(spacing: 14) {
-                    OnboardingPoint(icon: "lock.shield", title: "Private by design", detail: "Your health data never leaves your iPhone.")
-                    OnboardingPoint(icon: "heart.text.square", title: "Read-only Health access", detail: "Nervio reads HRV, resting heart rate, sleep, activity, workouts, and mindful sessions.")
-                    OnboardingPoint(icon: "chart.line.uptrend.xyaxis", title: "Transparent signals", detail: "Scores compare today with your own recent baseline and avoid medical conclusions.")
+                    OnboardingPoint(icon: "lock.shield", title: LocalizedStringKey(L10n.string("Private by design")), detail: LocalizedStringKey(L10n.string("Your health data never leaves your iPhone.")))
+                    OnboardingPoint(icon: "heart.text.square", title: LocalizedStringKey(L10n.string("Read-only Health access")), detail: LocalizedStringKey(L10n.string("Nervio reads HRV, resting heart rate, sleep, activity, workouts, and mindful sessions.")))
+                    OnboardingPoint(icon: "chart.line.uptrend.xyaxis", title: LocalizedStringKey(L10n.string("Transparent signals")), detail: LocalizedStringKey(L10n.string("Scores compare today with your own recent baseline and avoid medical conclusions.")))
                 }
 
                 Spacer()
@@ -38,7 +38,7 @@ struct OnboardingView: View {
                         Task { await onContinue() }
                     } label: {
                         Label(
-                            isLoading ? NSLocalizedString("Loading", comment: "") : NSLocalizedString("Connect Apple Health", comment: ""),
+                            isLoading ? L10n.string("Loading") : L10n.string("Connect Apple Health"),
                             systemImage: "heart.fill"
                         )
                             .frame(maxWidth: .infinity)
@@ -47,7 +47,7 @@ struct OnboardingView: View {
                     .controlSize(.large)
                     .disabled(isLoading || permissionState == .requesting)
 
-                    Button("Use Preview Data", action: onUsePreviewData)
+                    Button(L10n.string("Use Preview Data"), action: onUsePreviewData)
                         .buttonStyle(.borderless)
 
                     permissionMessage
@@ -62,14 +62,14 @@ struct OnboardingView: View {
     private var permissionMessage: some View {
         switch permissionState {
         case .unavailable:
-            Text("Apple Health is unavailable on this device. Preview data is shown in Simulator.")
+            Text(L10n.string("Apple Health is unavailable on this device. Preview data is shown in Simulator."))
                 .font(.footnote)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
         case .denied(let message):
             Text(
                 String(
-                    format: NSLocalizedString("Health access was not granted. %@", comment: ""),
+                    format: L10n.string("Health access was not granted. %@"),
                     message
                 )
             )

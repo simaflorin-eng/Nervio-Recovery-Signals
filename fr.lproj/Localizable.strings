@@ -91,3 +91,16 @@
 "System" = "Système";
 "Light" = "Clair";
 "Dark" = "Sombre";
+"widget.updated" = "Mis à jour";
+"widget.recovery" = "Récupération";
+"widget.stress" = "Stress";
+"widget.recovery_score" = "Score récupération";
+"widget.stress_score" = "Score stress";
+"widget.load" = "Charge";
+"widget.rec_short" = "Réc";
+"widget.config.recovery.title" = "Nervio Récupération";
+"widget.config.recovery.desc" = "Score de récupération, contexte et indicateurs clés.";
+"widget.config.stress.title" = "Nervio Stress";
+"widget.config.stress.desc" = "Score stress/charge, contexte et indicateurs clés.";
+
+"widget.steps" = "Pas Apple Watch";

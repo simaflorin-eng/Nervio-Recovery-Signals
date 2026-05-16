@@ -18,6 +18,10 @@ struct NervioWidgetSnapshot: Codable, Hashable {
     let steps: NervioWidgetMetric
     let stepsValue: Int?
     let updatedAt: Date
+    let languageCode: String?
+    let recoveryLabel: String?
+    let stressLabel: String?
+    let stepsLabel: String?
 
     static let preview = NervioWidgetSnapshot(
         recoveryValue: 74,
@@ -28,9 +32,13 @@ struct NervioWidgetSnapshot: Codable, Hashable {
         hrv: NervioWidgetMetric(title: "HRV", value: "54 ms", symbolName: "waveform.path.ecg"),
         restingHeartRate: NervioWidgetMetric(title: "Resting HR", value: "58 bpm", symbolName: "heart"),
         sleep: NervioWidgetMetric(title: "Sleep", value: "7.2 h", symbolName: "bed.double"),
-        steps: NervioWidgetMetric(title: "Apple Watch Steps", value: "12,430", symbolName: "figure.walk"),
+        steps: NervioWidgetMetric(title: "Steps", value: "12,430", symbolName: "figure.walk"),
         stepsValue: 12430,
-        updatedAt: .now
+        updatedAt: .now,
+        languageCode: "en",
+        recoveryLabel: "Recovery",
+        stressLabel: "Stress",
+        stepsLabel: "Steps"
     )
 
     static let unavailable = NervioWidgetSnapshot(
@@ -42,9 +50,13 @@ struct NervioWidgetSnapshot: Codable, Hashable {
         hrv: NervioWidgetMetric(title: "HRV", value: "--", symbolName: "waveform.path.ecg"),
         restingHeartRate: NervioWidgetMetric(title: "Resting HR", value: "--", symbolName: "heart"),
         sleep: NervioWidgetMetric(title: "Sleep", value: "--", symbolName: "bed.double"),
-        steps: NervioWidgetMetric(title: "Apple Watch Steps", value: "--", symbolName: "figure.walk"),
+        steps: NervioWidgetMetric(title: "Steps", value: "--", symbolName: "figure.walk"),
         stepsValue: nil,
-        updatedAt: .now
+        updatedAt: .now,
+        languageCode: "en",
+        recoveryLabel: "Recovery",
+        stressLabel: "Stress",
+        stepsLabel: "Steps"
     )
 }
 

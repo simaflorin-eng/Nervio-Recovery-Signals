@@ -2,13 +2,14 @@
 //  nervio_widgetControl.swift
 //  nervio.widget
 //
-//  Created by Florin Sima on 12/05/2026.
+//  Created by Florin Sima on 15/05/2026.
 //
 
 import AppIntents
 import SwiftUI
 import WidgetKit
 
+@available(iOS 18.0, *)
 struct nervio_widgetControl: ControlWidget {
     static let kind: String = "com.florinsima.Nervio---Recovery-Signals.nervio.widget"
 
@@ -30,6 +31,7 @@ struct nervio_widgetControl: ControlWidget {
     }
 }
 
+@available(iOS 18.0, *)
 extension nervio_widgetControl {
     struct Value {
         var isRunning: Bool
@@ -48,6 +50,7 @@ extension nervio_widgetControl {
     }
 }
 
+@available(iOS 18.0, *)
 struct TimerConfiguration: ControlConfigurationIntent {
     static let title: LocalizedStringResource = "Timer Name Configuration"
 
@@ -55,6 +58,7 @@ struct TimerConfiguration: ControlConfigurationIntent {
     var timerName: String
 }
 
+@available(iOS 18.0, *)
 struct StartTimerIntent: SetValueIntent {
     static let title: LocalizedStringResource = "Start a timer"
 

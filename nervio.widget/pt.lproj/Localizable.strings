@@ -1,0 +1,12 @@
+"widget.updated" = "Atualizado";
+"widget.recovery" = "Recuperação";
+"widget.stress" = "Estresse";
+"widget.recovery_score" = "Pontuação recuperação";
+"widget.stress_score" = "Pontuação estresse";
+"widget.load" = "Carga";
+"widget.rec_short" = "Rec";
+"widget.steps" = "Passos";
+"widget.config.recovery.title" = "Nervio Recuperação";
+"widget.config.recovery.desc" = "Pontuação de recuperação, contexto e indicadores-chave.";
+"widget.config.stress.title" = "Nervio Estresse";
+"widget.config.stress.desc" = "Pontuação de estresse/carga, contexto e indicadores-chave.";

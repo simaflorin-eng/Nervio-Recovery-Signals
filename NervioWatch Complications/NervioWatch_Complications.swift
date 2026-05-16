@@ -1,6 +1,36 @@
 import SwiftUI
 import WidgetKit
 
+private enum WatchComplicationL10n {
+    static let appGroupIdentifier = "group.com.florinsima.Nervio-Recovery-Signals"
+
+    private static let table: [String: [String: String]] = [
+        "fr": ["Recovery": "Récupération", "Stress": "Stress", "Steps": "Pas", "Needs data": "Données requises", "Score": "Score", "Load": "Charge", "Rec": "Réc", "From Watch": "Depuis Watch"],
+        "de": ["Recovery": "Erholung", "Stress": "Stress", "Steps": "Schritte", "Needs data": "Daten benötigt", "Score": "Score", "Load": "Belastung", "Rec": "Erh", "From Watch": "Von der Watch"],
+        "es": ["Recovery": "Recuperación", "Stress": "Estrés", "Steps": "Pasos", "Needs data": "Faltan datos", "Score": "Puntuación", "Load": "Carga", "Rec": "Rec", "From Watch": "Desde Watch"],
+        "it": ["Recovery": "Recupero", "Stress": "Stress", "Steps": "Passi", "Needs data": "Dati necessari", "Score": "Punteggio", "Load": "Carico", "Rec": "Rec", "From Watch": "Da Watch"],
+        "pt": ["Recovery": "Recuperação", "Stress": "Estresse", "Steps": "Passos", "Needs data": "Dados necessários", "Score": "Pontuação", "Load": "Carga", "Rec": "Rec", "From Watch": "Do Watch"],
+        "ro": ["Recovery": "Recuperare", "Stress": "Stres", "Steps": "Pași", "Needs data": "Date necesare", "Score": "Scor", "Load": "Încărcare", "Rec": "Rec", "From Watch": "De pe Watch"]
+    ]
+
+    static func t(_ key: String, languageCode: String?) -> String {
+        let appGroupCode = (UserDefaults(suiteName: appGroupIdentifier)?.string(forKey: "selectedLanguageCode") ?? "system").lowercased()
+        let snapshotCode = (languageCode ?? "system").lowercased()
+
+        let resolvedCode: String
+        if appGroupCode != "system" && !appGroupCode.isEmpty {
+            resolvedCode = appGroupCode
+        } else if snapshotCode != "system" && !snapshotCode.isEmpty {
+            resolvedCode = snapshotCode
+        } else {
+            resolvedCode = Locale.current.language.languageCode?.identifier.lowercased() ?? "en"
+        }
+
+        guard let value = table[resolvedCode]?[key] else { return key }
+        return value
+    }
+}
+
 struct NervioComplicationMetric: Codable, Hashable {
     let title: String
     let value: String
@@ -19,6 +49,10 @@ struct NervioComplicationSnapshot: Codable, Hashable {
     let steps: NervioComplicationMetric
     let stepsValue: Int?
     let updatedAt: Date
+    let languageCode: String?
+    let recoveryLabel: String?
+    let stressLabel: String?
+    let stepsLabel: String?
 
     static let preview = NervioComplicationSnapshot(
         recoveryValue: 74,
@@ -31,7 +65,11 @@ struct NervioComplicationSnapshot: Codable, Hashable {
         sleep: NervioComplicationMetric(title: "Sleep", value: "7.2 h", symbolName: "bed.double"),
         steps: NervioComplicationMetric(title: "Steps", value: "12,430", symbolName: "figure.walk"),
         stepsValue: 12430,
-        updatedAt: .now
+        updatedAt: .now,
+        languageCode: "en",
+        recoveryLabel: "Recovery",
+        stressLabel: "Stress",
+        stepsLabel: "Steps"
     )
 
     static let unavailable = NervioComplicationSnapshot(
@@ -45,7 +83,11 @@ struct NervioComplicationSnapshot: Codable, Hashable {
         sleep: NervioComplicationMetric(title: "Sleep", value: "--", symbolName: "bed.double"),
         steps: NervioComplicationMetric(title: "Steps", value: "--", symbolName: "figure.walk"),
         stepsValue: nil,
-        updatedAt: .now
+        updatedAt: .now,
+        languageCode: "en",
+        recoveryLabel: "Recovery",
+        stressLabel: "Stress",
+        stepsLabel: "Steps"
     )
 }
 
@@ -80,8 +122,8 @@ struct NervioComplicationProvider: TimelineProvider {
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<NervioComplicationEntry>) -> Void) {
         let entry = NervioComplicationEntry(date: .now, signal: signal, snapshot: NervioComplicationSnapshotStore.load())
-        // Ask WidgetKit for a fresh timeline more often so steps refresh without opening the app.
-        let refreshDate = Calendar.current.date(byAdding: .minute, value: 10, to: .now) ?? .now.addingTimeInterval(600)
+        // Ask WidgetKit for a fresh timeline more often so steps refresh sooner.
+        let refreshDate = Calendar.current.date(byAdding: .minute, value: 5, to: .now) ?? .now.addingTimeInterval(300)
         completion(Timeline(entries: [entry], policy: .after(refreshDate)))
     }
 }
@@ -112,16 +154,31 @@ struct NervioComplicationEntryView: View {
 
         switch family {
         case .accessoryCircular:
-            Text(presentation.valueText)
-                .font(.system(size: 14, weight: .bold, design: .rounded))
-                .monospacedDigit()
+            ZStack {
+                Circle()
+                    .stroke(presentation.tint.opacity(0.25), lineWidth: 3)
+                VStack(spacing: 1) {
+                    Image(systemName: presentation.symbolName)
+                        .font(.system(size: 10, weight: .semibold))
+                        .foregroundStyle(presentation.tint)
+                    Text(presentation.valueText)
+                        .font(.system(size: 12, weight: .bold, design: .rounded))
+                        .monospacedDigit()
+                }
+            }
         case .accessoryRectangular:
             VStack(alignment: .leading, spacing: 2) {
-                Text(presentation.title)
+                Label(presentation.title, systemImage: presentation.symbolName)
                     .font(.caption2)
+                    .lineLimit(1)
                 Text(presentation.primaryLine)
                     .font(.headline)
                     .monospacedDigit()
+                    .lineLimit(1)
+                Text(presentation.secondaryLine)
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
             }
         case .accessoryInline:
             Text(presentation.inlineText)
@@ -137,17 +194,17 @@ struct NervioComplicationPresentation {
 
     var title: String {
         switch signal {
-        case .recovery: "Recovery"
-        case .stress: "Stress"
-        case .steps: "Steps"
+        case .recovery: snapshot.recoveryLabel ?? WatchComplicationL10n.t("Recovery", languageCode: snapshot.languageCode)
+        case .stress: snapshot.stressLabel ?? WatchComplicationL10n.t("Stress", languageCode: snapshot.languageCode)
+        case .steps: snapshot.stepsLabel ?? WatchComplicationL10n.t("Steps", languageCode: snapshot.languageCode)
         }
     }
 
     var shortTitle: String {
         switch signal {
-        case .recovery: "Rec"
-        case .stress: "Load"
-        case .steps: "Step"
+        case .recovery: WatchComplicationL10n.t("Rec", languageCode: snapshot.languageCode)
+        case .stress: WatchComplicationL10n.t("Load", languageCode: snapshot.languageCode)
+        case .steps: WatchComplicationL10n.t("Steps", languageCode: snapshot.languageCode)
         }
     }
 
@@ -184,20 +241,20 @@ struct NervioComplicationPresentation {
     var primaryLine: String {
         switch signal {
         case .recovery, .stress:
-            return value.map { "Score \($0)" } ?? "Needs data"
+            return value.map { "\(WatchComplicationL10n.t("Score", languageCode: snapshot.languageCode)) \($0)" } ?? WatchComplicationL10n.t("Needs data", languageCode: snapshot.languageCode)
         case .steps:
-            return value.map { "\(stepsFormatter.string(from: NSNumber(value: $0)) ?? "\($0)") steps" } ?? "Needs data"
+            return value.map { "\(stepsFormatter.string(from: NSNumber(value: $0)) ?? "\($0)") \(WatchComplicationL10n.t("Steps", languageCode: snapshot.languageCode))" } ?? WatchComplicationL10n.t("Needs data", languageCode: snapshot.languageCode)
         }
     }
 
     var secondaryLine: String {
         switch signal {
         case .recovery:
-            return "Load \(snapshot.stressValue.map(String.init) ?? "--")"
+            return "\(WatchComplicationL10n.t("Load", languageCode: snapshot.languageCode)) \(snapshot.stressValue.map(String.init) ?? "--")"
         case .stress:
-            return "Rec \(snapshot.recoveryValue.map(String.init) ?? "--")"
+            return "\(WatchComplicationL10n.t("Rec", languageCode: snapshot.languageCode)) \(snapshot.recoveryValue.map(String.init) ?? "--")"
         case .steps:
-            return "From Apple Watch"
+            return WatchComplicationL10n.t("From Watch", languageCode: snapshot.languageCode)
         }
     }
 
@@ -224,12 +281,7 @@ private let stepsFormatter: NumberFormatter = {
 }()
 
 private func compactStepsText(_ value: Int) -> String {
-    if value >= 1000 {
-        let compactValue = Double(value) / 1000
-        return String(format: "%.1fK", compactValue)
-    }
-
-    return "\(value)"
+    stepsFormatter.string(from: NSNumber(value: value)) ?? "\(value)"
 }
 
 private func recoveryTint(for value: Int?) -> Color {
@@ -288,7 +340,7 @@ struct NervioStepsComplication: Widget {
             NervioComplicationEntryView(entry: entry)
         }
         .configurationDisplayName("Nervio Steps")
-        .description("Shows today's Apple Watch steps.")
+        .description("Shows today's steps.")
         .supportedFamilies([.accessoryCircular, .accessoryRectangular, .accessoryInline])
     }
 }
