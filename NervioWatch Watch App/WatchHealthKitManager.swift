@@ -4,6 +4,7 @@ import HealthKit
 actor WatchHealthKitManager {
     private let healthStore = HKHealthStore()
     private let calendar = Calendar.current
+    private var observerQueries: [HKObserverQuery] = []
 
     var isHealthDataAvailable: Bool {
         HKHealthStore.isHealthDataAvailable()
@@ -18,9 +19,37 @@ actor WatchHealthKitManager {
 
         do {
             try await healthStore.requestAuthorization(toShare: Set<HKSampleType>(), read: [stepType])
+            enableBackgroundDelivery(for: stepType)
         } catch {
             return
         }
+    }
+
+    func startObservingStepUpdates(onUpdate: @escaping @Sendable () async -> Void) async {
+        guard canRequestHealthAuthorization,
+              isHealthDataAvailable,
+              observerQueries.isEmpty,
+              let stepType = HKObjectType.quantityType(forIdentifier: .stepCount) else {
+            return
+        }
+
+        let query = HKObserverQuery(sampleType: stepType, predicate: nil) { _, completionHandler, _ in
+            Task {
+                await onUpdate()
+                completionHandler()
+            }
+        }
+
+        observerQueries.append(query)
+        healthStore.execute(query)
+        enableBackgroundDelivery(for: stepType)
+    }
+
+    func stopObservingStepUpdates() {
+        for query in observerQueries {
+            healthStore.stop(query)
+        }
+        observerQueries.removeAll()
     }
 
     func fetchTodayAppleWatchSteps() async -> Int? {
@@ -85,5 +114,9 @@ actor WatchHealthKitManager {
         let sourceLooksLikePhone = sourceName.contains("iphone") || productType.contains("iphone") || deviceModel.contains("iphone")
 
         return (sourceLooksLikeWatch || deviceLooksLikeWatch) && !sourceLooksLikePhone
+    }
+
+    private func enableBackgroundDelivery(for stepType: HKQuantityType) {
+        healthStore.enableBackgroundDelivery(for: stepType, frequency: .immediate) { _, _ in }
     }
 }

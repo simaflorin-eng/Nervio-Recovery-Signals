@@ -120,6 +120,10 @@ final class WatchNervioSession: NSObject, ObservableObject, WCSessionDelegate {
         }
 
         Task {
+            await healthKitManager.startObservingStepUpdates { [weak self] in
+                guard let self else { return }
+                await self.refreshStepsFromWatch()
+            }
             await refreshStepsFromWatch()
         }
     }
