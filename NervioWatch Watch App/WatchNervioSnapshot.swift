@@ -68,6 +68,23 @@ enum WatchNervioSnapshotStore {
     }
 }
 
+enum WatchStepComplicationCacheStore {
+    static let appGroupIdentifier = "group.com.florinsima.Nervio-Recovery-Signals"
+    static let stepsValueKey = "watch.steps.cache.value"
+    static let updatedAtKey = "watch.steps.cache.updatedAt"
+    static let sourceLabelKey = "watch.steps.cache.source"
+
+    static func save(stepsValue: Int, updatedAt: Date, sourceLabel: String) {
+        defaults.set(stepsValue, forKey: stepsValueKey)
+        defaults.set(updatedAt.timeIntervalSince1970, forKey: updatedAtKey)
+        defaults.set(sourceLabel, forKey: sourceLabelKey)
+    }
+
+    private static var defaults: UserDefaults {
+        UserDefaults(suiteName: appGroupIdentifier) ?? .standard
+    }
+}
+
 extension WatchNervioSnapshot {
     func updatingSteps(_ stepsValue: Int) -> WatchNervioSnapshot {
         WatchNervioSnapshot(
@@ -134,6 +151,12 @@ final class WatchNervioSession: NSObject, ObservableObject, WCSessionDelegate {
             return
         }
 
+        let now = Date()
+        WatchStepComplicationCacheStore.save(
+            stepsValue: stepsValue,
+            updatedAt: now,
+            sourceLabel: "From Watch"
+        )
         apply(snapshot.updatingSteps(stepsValue))
         WidgetCenter.shared.reloadAllTimelines()
     }

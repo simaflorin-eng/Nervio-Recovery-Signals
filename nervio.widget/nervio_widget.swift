@@ -211,97 +211,134 @@ private struct NervioSignalWidgetView: View {
         return code.isEmpty ? "system" : code
     }
 
+    private var isPro: Bool {
+        UserDefaults(suiteName: "group.com.florinsima.Nervio-Recovery-Signals")?.bool(forKey: "nervio.isPro") ?? false
+    }
+
     var body: some View {
-        switch family {
-        case .systemSmall:
-            smallBody
-        case .systemLarge:
-            largeBody
-        default:
-            mediumBody
+        if !isPro {
+            proGateBody
+        } else {
+            switch family {
+            case .systemSmall:  smallBody
+            case .systemLarge:  largeBody
+            default:            mediumBody
+            }
         }
     }
 
-    private var smallBody: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            headerLine
-            ring
-                .frame(width: 62, height: 62)
-                .frame(maxWidth: .infinity)
-            Text(smallPrimaryLine)
-                .font(.subheadline.weight(.semibold))
-                .lineLimit(1)
-                .minimumScaleFactor(0.85)
-            Text(smallSecondaryLine)
+    private var proGateBody: some View {
+        VStack(spacing: 8) {
+            Image(systemName: "sparkles")
+                .font(.title2)
+                .foregroundStyle(LinearGradient(colors: [.green, .mint], startPoint: .topLeading, endPoint: .bottomTrailing))
+            Text("Nervio Pro")
+                .font(.system(size: 13, weight: .bold, design: .rounded))
+                .foregroundStyle(.white)
+            Text("Unlock in app")
                 .font(.caption2)
-                .foregroundStyle(.secondary)
-                .lineLimit(1)
+                .foregroundStyle(.white.opacity(0.55))
         }
-        .padding(12)
-        .containerBackground(.fill.tertiary, for: .widget)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .containerBackground(for: .widget) {
+            LinearGradient(
+                colors: [Color(red: 0.04, green: 0.06, blue: 0.11), Color(red: 0.07, green: 0.10, blue: 0.16)],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+        }
+    }
+
+    // MARK: - Layouts
+
+    private var smallBody: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            signalLabel
+            Spacer(minLength: 10)
+            ring
+                .frame(width: 76, height: 76)
+                .frame(maxWidth: .infinity)
+            Spacer(minLength: 10)
+            Text(localizedSummary)
+                .font(.caption.weight(.medium))
+                .foregroundStyle(.white.opacity(0.72))
+                .lineLimit(2)
+                .minimumScaleFactor(0.8)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .padding(14)
+        .containerBackground(for: .widget) { widgetBackground }
     }
 
     private var mediumBody: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: 16) {
             ring
-                .frame(width: 74, height: 74)
+                .frame(width: 84, height: 84)
 
-            VStack(alignment: .leading, spacing: 6) {
-                headerLine
-                Text(mainValueLine)
-                    .font(.title3.weight(.semibold))
+            VStack(alignment: .leading, spacing: 4) {
+                signalLabel
+                Text(scoreHeadline)
+                    .font(.system(size: 20, weight: .bold, design: .rounded))
+                    .monospacedDigit()
+                    .foregroundStyle(.white)
                     .lineLimit(1)
-                Text(secondaryLine)
+                    .minimumScaleFactor(0.85)
+                Text(localizedSummary)
                     .font(.caption)
-                    .foregroundStyle(.secondary)
-                    .lineLimit(1)
-                HStack(spacing: 10) {
+                    .foregroundStyle(.white.opacity(0.62))
+                    .lineLimit(2)
+                    .fixedSize(horizontal: false, vertical: true)
+                Spacer(minLength: 4)
+                HStack(spacing: 12) {
                     Label(entry.snapshot.steps.value, systemImage: "figure.walk")
-                        .font(.caption2)
+                        .font(.caption2.weight(.medium))
+                        .foregroundStyle(.white.opacity(0.55))
                         .lineLimit(1)
                     Label(entry.snapshot.hrv.value, systemImage: "waveform.path.ecg")
-                        .font(.caption2)
+                        .font(.caption2.weight(.medium))
+                        .foregroundStyle(.white.opacity(0.55))
                         .lineLimit(1)
                 }
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
         .padding(14)
-        .containerBackground(.fill.tertiary, for: .widget)
+        .containerBackground(for: .widget) { widgetBackground }
     }
 
     private var largeBody: some View {
         VStack(alignment: .leading, spacing: 0) {
-            Spacer(minLength: 4)
-
             HStack {
-                headerLine
+                signalLabel
                 Spacer()
                 Text("\(w("widget.updated", languageCode: widgetLanguageCode)) \(entry.snapshot.updatedAt, style: .time)")
                     .font(.caption2)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(.white.opacity(0.38))
             }
 
-            Spacer(minLength: 6)
+            Spacer(minLength: 12)
 
-            HStack(alignment: .top, spacing: 12) {
+            HStack(alignment: .top, spacing: 14) {
                 ring
-                    .frame(width: 96, height: 96)
+                    .frame(width: 100, height: 100)
 
                 VStack(alignment: .leading, spacing: 5) {
-                    Text(largePrimaryLine)
-                        .font(.title2.weight(.bold))
-                        .lineLimit(2)
+                    Text(scoreHeadline)
+                        .font(.system(size: 24, weight: .bold, design: .rounded))
+                        .monospacedDigit()
+                        .foregroundStyle(.white)
+                        .lineLimit(1)
                         .minimumScaleFactor(0.8)
                     Text(localizedSummary)
                         .font(.subheadline)
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(.white.opacity(0.62))
                         .lineLimit(3)
                         .fixedSize(horizontal: false, vertical: true)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
 
-            Spacer(minLength: 6)
+            Spacer(minLength: 14)
 
             HStack(spacing: 8) {
                 metricChip(title: entry.snapshot.hrv.title, value: entry.snapshot.hrv.value, symbol: entry.snapshot.hrv.symbolName)
@@ -309,131 +346,156 @@ private struct NervioSignalWidgetView: View {
                 metricChip(title: entry.snapshot.steps.title, value: entry.snapshot.steps.value, symbol: entry.snapshot.steps.symbolName)
             }
 
-            Spacer(minLength: 2)
+            Spacer(minLength: 10)
 
-            HStack(spacing: 10) {
-                Label(entry.snapshot.sleep.value, systemImage: entry.snapshot.sleep.symbolName)
-                    .lineLimit(1)
-                Spacer(minLength: 4)
-                Text("R \(entry.snapshot.recoveryValue.map(String.init) ?? "--")")
-                Text("S \(entry.snapshot.stressValue.map(String.init) ?? "--")")
+            HStack(spacing: 6) {
+                Image(systemName: entry.snapshot.sleep.symbolName)
+                    .font(.caption2)
+                    .foregroundStyle(color.opacity(0.75))
+                    .widgetAccentable()
+                Text(entry.snapshot.sleep.value)
+                    .font(.caption.monospacedDigit())
+                    .foregroundStyle(.white.opacity(0.55))
+                Spacer()
+                Text("R \(entry.snapshot.recoveryValue.map(String.init) ?? "--")  ·  S \(entry.snapshot.stressValue.map(String.init) ?? "--")")
+                    .font(.caption.monospacedDigit())
+                    .foregroundStyle(.white.opacity(0.35))
             }
-            .font(.caption)
-            .foregroundStyle(.secondary)
-
-            Spacer(minLength: 2)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .padding(.horizontal, 12)
-        .containerBackground(.fill.tertiary, for: .widget)
+        .padding(14)
+        .containerBackground(for: .widget) { widgetBackground }
     }
 
-    private var headerLine: some View {
-        Text(signal == .recovery ? w("widget.recovery", languageCode: widgetLanguageCode) : w("widget.stress", languageCode: widgetLanguageCode))
-            .font(.caption.weight(.semibold))
-            .foregroundStyle(.secondary)
-            .textCase(.uppercase)
+    // MARK: - Components
+
+    private var signalLabel: some View {
+        Text((signal == .recovery
+            ? w("widget.recovery", languageCode: widgetLanguageCode)
+            : w("widget.stress", languageCode: widgetLanguageCode)).uppercased())
+            .font(.system(size: 10, weight: .bold, design: .rounded))
+            .foregroundStyle(color)
+            .tracking(1.0)
+            .widgetAccentable()
     }
 
     private var ring: some View {
         ZStack {
             Circle()
-                .stroke(color.opacity(0.2), lineWidth: 9)
+                .stroke(Color.white.opacity(0.10), lineWidth: 10)
 
+            // Glow layer
             Circle()
                 .trim(from: 0, to: progress)
-                .stroke(color, style: StrokeStyle(lineWidth: 9, lineCap: .round))
+                .stroke(color.opacity(0.45), style: StrokeStyle(lineWidth: 18, lineCap: .round))
                 .rotationEffect(.degrees(-90))
+                .blur(radius: 6)
+                .widgetAccentable()
 
-            VStack(spacing: 1) {
-                Text(valueText)
-                    .font(.system(size: 22, weight: .bold, design: .rounded))
-                    .monospacedDigit()
-            }
+            // Main arc
+            Circle()
+                .trim(from: 0, to: progress)
+                .stroke(color, style: StrokeStyle(lineWidth: 10, lineCap: .round))
+                .rotationEffect(.degrees(-90))
+                .widgetAccentable()
+
+            Text(valueText)
+                .font(.system(size: 22, weight: .bold, design: .rounded))
+                .monospacedDigit()
+                .foregroundStyle(.white)
         }
     }
 
     private func metricChip(title: String, value: String, symbol: String) -> some View {
-        let localizedTitle = localizedMetricTitle(from: title)
-        return VStack(alignment: .leading, spacing: 4) {
-            Label(localizedTitle, systemImage: symbol)
-                .font(.caption2)
+        VStack(alignment: .leading, spacing: 3) {
+            Label(localizedMetricTitle(from: title), systemImage: symbol)
+                .font(.caption2.weight(.medium))
+                .foregroundStyle(color)
                 .lineLimit(1)
+                .widgetAccentable()
             Text(value)
-                .font(.headline.monospacedDigit())
+                .font(.system(size: 16, weight: .bold, design: .rounded))
+                .monospacedDigit()
+                .foregroundStyle(.white)
                 .lineLimit(1)
                 .minimumScaleFactor(0.7)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(10)
-        .background(Color.primary.opacity(0.06), in: RoundedRectangle(cornerRadius: 8))
+        .padding(.horizontal, 10)
+        .padding(.vertical, 9)
+        .background(.white.opacity(0.09), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
     }
 
-    private func localizedMetricTitle(from title: String) -> String {
-        let normalized = title.lowercased()
-        if normalized.contains("hrv") { return "HRV" }
-        if normalized.contains("resting") { return "R-HR" }
-        if normalized.contains("sleep") { return w("Sleep", languageCode: widgetLanguageCode) }
-        if normalized.contains("step") { return "Steps" }
-        return title
+    @ViewBuilder
+    private var widgetBackground: some View {
+        ZStack {
+            LinearGradient(
+                colors: [
+                    Color(red: 0.04, green: 0.06, blue: 0.11),
+                    Color(red: 0.07, green: 0.10, blue: 0.16)
+                ],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+            RadialGradient(
+                colors: [color.opacity(0.42), .clear],
+                center: .topLeading,
+                startRadius: 0,
+                endRadius: 200
+            )
+        }
     }
+
+    // MARK: - Data
 
     private var score: Int? {
         switch signal {
-        case .recovery:
-            return entry.snapshot.recoveryValue
-        case .stress:
-            return entry.snapshot.stressValue
+        case .recovery: return entry.snapshot.recoveryValue
+        case .stress:   return entry.snapshot.stressValue
         }
     }
 
-    private var progress: CGFloat {
-        CGFloat(Double(score ?? 0) / 100.0)
-    }
-
-    private var valueText: String {
-        score.map(String.init) ?? "--"
-    }
+    private var progress: CGFloat { CGFloat(Double(score ?? 0) / 100.0) }
+    private var valueText: String { score.map(String.init) ?? "--" }
 
     private var color: Color {
-        if signal == .recovery { return .teal }
-        return .orange
-    }
-
-    private var mainValueLine: String {
         switch signal {
-        case .recovery:
-            return score.map { "\(w("widget.recovery_score", languageCode: widgetLanguageCode)) \($0)" } ?? "\(w("widget.recovery_score", languageCode: widgetLanguageCode)) --"
-        case .stress:
-            return score.map { "\(w("widget.stress_score", languageCode: widgetLanguageCode)) \($0)" } ?? "\(w("widget.stress_score", languageCode: widgetLanguageCode)) --"
+        case .recovery: return semanticRecoveryColor(for: score)
+        case .stress:   return semanticStressColor(for: score)
         }
     }
 
-    private var largePrimaryLine: String {
-        switch signal {
-        case .recovery:
-            if let value = score { return "\(w("widget.recovery_score", languageCode: widgetLanguageCode)) \(value)" }
-            return w("widget.recovery_score", languageCode: widgetLanguageCode)
-        case .stress:
-            if let value = score { return "\(w("widget.stress_score", languageCode: widgetLanguageCode)) \(value)" }
-            return w("widget.stress_score", languageCode: widgetLanguageCode)
+    private func semanticRecoveryColor(for value: Int?) -> Color {
+        guard let value else { return .teal }
+        switch value {
+        case 70...100: return .green
+        case 52..<70:  return .yellow
+        case 35..<52:  return .orange
+        default:       return .red
         }
     }
 
-    private var secondaryLine: String {
-        switch signal {
-        case .recovery:
-            return "\(w("widget.load", languageCode: widgetLanguageCode)) \(entry.snapshot.stressValue.map(String.init) ?? "--")"
-        case .stress:
-            return "\(w("widget.recovery", languageCode: widgetLanguageCode)) \(entry.snapshot.recoveryValue.map(String.init) ?? "--")"
+    private func semanticStressColor(for value: Int?) -> Color {
+        guard let value else { return .orange }
+        switch value {
+        case 75...100: return .red
+        case 50..<75:  return .orange
+        case 25..<50:  return .yellow
+        default:       return .green
         }
+    }
+
+    private var scoreHeadline: String {
+        let label = signal == .recovery
+            ? w("widget.recovery_score", languageCode: widgetLanguageCode)
+            : w("widget.stress_score", languageCode: widgetLanguageCode)
+        return score.map { "\(label) \($0)" } ?? label
     }
 
     private var localizedSummary: String {
         guard let value = score else {
             return w("widget.summary.no_data", languageCode: widgetLanguageCode)
         }
-
         switch signal {
         case .recovery:
             if value >= 70 { return w("widget.summary.recovery.high", languageCode: widgetLanguageCode) }
@@ -446,22 +508,13 @@ private struct NervioSignalWidgetView: View {
         }
     }
 
-    private var smallPrimaryLine: String {
-        switch signal {
-        case .recovery:
-            return "\(w("widget.recovery", languageCode: widgetLanguageCode)) \(valueText)"
-        case .stress:
-            return "\(w("widget.stress", languageCode: widgetLanguageCode)) \(valueText)"
-        }
-    }
-
-    private var smallSecondaryLine: String {
-        switch signal {
-        case .recovery:
-            return "\(w("widget.load", languageCode: widgetLanguageCode)) \(entry.snapshot.stressValue.map(String.init) ?? "--")"
-        case .stress:
-            return "\(w("widget.rec_short", languageCode: widgetLanguageCode)) \(entry.snapshot.recoveryValue.map(String.init) ?? "--")"
-        }
+    private func localizedMetricTitle(from title: String) -> String {
+        let n = title.lowercased()
+        if n.contains("hrv")     { return "HRV" }
+        if n.contains("resting") { return "R-HR" }
+        if n.contains("sleep")   { return w("Sleep", languageCode: widgetLanguageCode) }
+        if n.contains("step")    { return "Steps" }
+        return title
     }
 }
 

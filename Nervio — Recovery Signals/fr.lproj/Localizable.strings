@@ -208,3 +208,4 @@
 "Activity load was higher than usual, without reduced recovery signals." = "La charge d’activité était plus élevée que d’habitude, sans baisse des signaux de récupération.";
 "High recent activity combined with reduced recovery signals may indicate accumulated fatigue." = "Une activité récente élevée combinée à des signaux de récupération réduits peut indiquer une fatigue accumulée.";
 "Activity load was much higher than usual, but is not reducing recovery by itself." = "La charge d’activité était bien plus élevée que d’habitude, mais ne réduit pas la récupération à elle seule.";
+"A daily nudge at your chosen time showing your latest recovery score and a short readiness summary — no account needed, all data stays on your device." = "Un rappel quotidien à l'heure choisie affichant votre dernier score de récupération et un court résumé de disponibilité — sans compte, toutes les données restent sur votre appareil.";

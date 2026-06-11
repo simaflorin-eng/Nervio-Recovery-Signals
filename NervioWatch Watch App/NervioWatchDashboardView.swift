@@ -1,4 +1,5 @@
 import SwiftUI
+import WatchKit
 
 struct NervioWatchDashboardView: View {
     @StateObject private var session = WatchNervioSession()
@@ -46,6 +47,7 @@ struct NervioWatchDashboardView: View {
         }
         .task {
             await session.refreshStepsFromWatch()
+            scheduleNextWatchRefresh()
         }
         .onChange(of: scenePhase) {
             guard scenePhase == .active else { return }

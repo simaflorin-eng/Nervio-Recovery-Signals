@@ -121,11 +121,59 @@ struct NervioComplicationProvider: TimelineProvider {
     }
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<NervioComplicationEntry>) -> Void) {
-        let entry = NervioComplicationEntry(date: .now, signal: signal, snapshot: NervioComplicationSnapshotStore.load())
-        // Steps can change frequently; recovery/stress are less volatile.
-        let refreshMinutes = signal == .steps ? 1 : 5
-        let refreshDate = Calendar.current.date(byAdding: .minute, value: refreshMinutes, to: .now) ?? .now.addingTimeInterval(TimeInterval(refreshMinutes * 60))
-        completion(Timeline(entries: [entry], policy: .after(refreshDate)))
+        let baseSnapshot = NervioComplicationSnapshotStore.load()
+        // watchOS decides the exact refresh timing; this requests best-effort updates every 15 minutes.
+        let refreshDate = Date().addingTimeInterval(15 * 60)
+
+        guard signal == .steps else {
+            let entry = NervioComplicationEntry(date: .now, signal: signal, snapshot: baseSnapshot)
+            completion(Timeline(entries: [entry], policy: .after(refreshDate)))
+            return
+        }
+
+        let stepCache = WatchStepComplicationCache.load()
+        // Only use cached steps if they were recorded today — stale cache from yesterday shows as nil.
+        let stepsFromToday = stepCache.updatedAt.map { Calendar.current.isDateInToday($0) } ?? false
+        let effectiveSteps = stepsFromToday ? stepCache.stepsValue : nil
+        let snapshot = baseSnapshot.updatingSteps(
+            stepsValue: effectiveSteps,
+            updatedAt: stepCache.updatedAt,
+            sourceLabel: stepCache.sourceLabel
+        )
+        var entries: [NervioComplicationEntry] = [
+            NervioComplicationEntry(date: .now, signal: signal, snapshot: snapshot)
+        ]
+        // Add a midnight entry so the complication auto-resets to "--" at the start of each new day.
+        if let midnight = Calendar.current.nextDate(after: .now, matching: DateComponents(hour: 0, minute: 0, second: 0), matchingPolicy: .nextTime) {
+            let resetSnapshot = baseSnapshot.updatingSteps(stepsValue: nil, updatedAt: midnight, sourceLabel: stepCache.sourceLabel)
+            entries.append(NervioComplicationEntry(date: midnight, signal: .steps, snapshot: resetSnapshot))
+        }
+        completion(Timeline(entries: entries, policy: .after(refreshDate)))
+    }
+}
+
+private enum WatchStepComplicationCache {
+    private static let appGroupIdentifier = "group.com.florinsima.Nervio-Recovery-Signals"
+    private static let stepsValueKey = "watch.steps.cache.value"
+    private static let updatedAtKey = "watch.steps.cache.updatedAt"
+    private static let sourceLabelKey = "watch.steps.cache.source"
+
+    struct Snapshot {
+        let stepsValue: Int?
+        let updatedAt: Date?
+        let sourceLabel: String?
+    }
+
+    static func load() -> Snapshot {
+        let stepsValue = defaults.object(forKey: stepsValueKey) as? Int
+        let updatedAtSeconds = defaults.object(forKey: updatedAtKey) as? TimeInterval
+        let sourceLabel = defaults.string(forKey: sourceLabelKey)
+        let updatedAt = updatedAtSeconds.map(Date.init(timeIntervalSince1970:))
+        return Snapshot(stepsValue: stepsValue, updatedAt: updatedAt, sourceLabel: sourceLabel)
+    }
+
+    private static var defaults: UserDefaults {
+        UserDefaults(suiteName: appGroupIdentifier) ?? .standard
     }
 }
 
@@ -255,7 +303,8 @@ struct NervioComplicationPresentation {
         case .stress:
             return "\(WatchComplicationL10n.t("Rec", languageCode: snapshot.languageCode)) \(snapshot.recoveryValue.map(String.init) ?? "--")"
         case .steps:
-            return WatchComplicationL10n.t("From Watch", languageCode: snapshot.languageCode)
+            let source = snapshot.stepsSourceLabel ?? WatchComplicationL10n.t("From Watch", languageCode: snapshot.languageCode)
+            return "\(freshnessText) · \(source)"
         }
     }
 
@@ -270,8 +319,19 @@ struct NervioComplicationPresentation {
         case .stress:
             return stressTint(for: snapshot.stressValue)
         case .steps:
-            return .cyan
+            return isStale ? .gray : .cyan
         }
+    }
+
+    private var freshnessText: String {
+        guard let updatedAt = snapshot.stepsUpdatedAt else { return "Updated --" }
+        let minutes = max(0, Int(Date().timeIntervalSince(updatedAt) / 60))
+        return "Updated \(minutes)m ago"
+    }
+
+    private var isStale: Bool {
+        guard let updatedAt = snapshot.stepsUpdatedAt else { return true }
+        return Date().timeIntervalSince(updatedAt) >= 60 * 60
     }
 }
 
@@ -283,6 +343,47 @@ private let stepsFormatter: NumberFormatter = {
 
 private func compactStepsText(_ value: Int) -> String {
     stepsFormatter.string(from: NSNumber(value: value)) ?? "\(value)"
+}
+
+private extension NervioComplicationSnapshot {
+    var stepsUpdatedAt: Date? {
+        guard summary.hasPrefix("stepsUpdatedAt:"),
+              let timestamp = Double(summary.replacingOccurrences(of: "stepsUpdatedAt:", with: "")) else {
+            return nil
+        }
+        return Date(timeIntervalSince1970: timestamp)
+    }
+
+    var stepsSourceLabel: String? {
+        guard status.hasPrefix("stepsSource:") else { return nil }
+        return status.replacingOccurrences(of: "stepsSource:", with: "")
+    }
+
+    func updatingSteps(stepsValue: Int?, updatedAt: Date?, sourceLabel: String?) -> NervioComplicationSnapshot {
+        let compactValue = stepsValue.map { stepsFormatter.string(from: NSNumber(value: $0)) ?? "\($0)" } ?? "--"
+        return NervioComplicationSnapshot(
+            recoveryValue: recoveryValue,
+            stressValue: stressValue,
+            // Keep source metadata inside existing payload fields so we don't break Codable layout.
+            status: "stepsSource:\(sourceLabel ?? WatchComplicationL10n.t("From Watch", languageCode: languageCode))",
+            summary: "stepsUpdatedAt:\(updatedAt?.timeIntervalSince1970 ?? 0)",
+            baselineDays: baselineDays,
+            hrv: hrv,
+            restingHeartRate: restingHeartRate,
+            sleep: sleep,
+            steps: NervioComplicationMetric(
+                title: stepsLabel ?? WatchComplicationL10n.t("Steps", languageCode: languageCode),
+                value: compactValue,
+                symbolName: "figure.walk"
+            ),
+            stepsValue: stepsValue,
+            updatedAt: updatedAt ?? self.updatedAt,
+            languageCode: languageCode,
+            recoveryLabel: recoveryLabel,
+            stressLabel: stressLabel,
+            stepsLabel: stepsLabel
+        )
+    }
 }
 
 private func recoveryTint(for value: Int?) -> Color {

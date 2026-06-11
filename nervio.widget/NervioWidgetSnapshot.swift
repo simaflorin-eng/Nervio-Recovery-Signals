@@ -24,8 +24,8 @@ struct NervioWidgetSnapshot: Codable, Hashable {
     let stepsLabel: String?
 
     static let preview = NervioWidgetSnapshot(
-        recoveryValue: 74,
-        stressValue: 31,
+        recoveryValue: 82,
+        stressValue: 28,
         status: "Recovery signal",
         summary: "Steady recovery signal today.",
         baselineDays: 20,

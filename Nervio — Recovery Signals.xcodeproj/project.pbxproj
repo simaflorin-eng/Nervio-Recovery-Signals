@@ -11,6 +11,10 @@
 		86006E592FB3B42B00714B37 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86FE42EE2FB309B70089F00F /* SwiftUI.framework */; };
 		86006E682FB3B42B00714B37 /* NervioWatch ComplicationsExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 86006E572FB3B42B00714B37 /* NervioWatch ComplicationsExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		86006E702FB3BB0D00714B37 /* NervioWatch Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 86006E232FB3B1F500714B37 /* NervioWatch Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		86AF6A962FDB36AA00CD01D7 /* NervioProManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86AF6A942FDB34A300CD01D7 /* NervioProManager.swift */; };
+		86AF6A972FDB36C100CD01D7 /* NervioLiveActivityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86AF6A932FDAE76900CD01D7 /* NervioLiveActivityManager.swift */; };
+		86AF6A982FDB36D700CD01D7 /* ProPaywallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86AF6A952FDB34B900CD01D7 /* ProPaywallView.swift */; };
+		86AF6A9B2FDB383300CD01D7 /* Nervio.storekit in Resources */ = {isa = PBXBuildFile; fileRef = 86AF6A9A2FDB383300CD01D7 /* Nervio.storekit */; };
 		86D765C92FB7572600870192 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86FE42EC2FB309B70089F00F /* WidgetKit.framework */; };
 		86D765CA2FB7572600870192 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86FE42EE2FB309B70089F00F /* SwiftUI.framework */; };
 		86D765DB2FB7572700870192 /* nervio.widgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 86D765C82FB7572600870192 /* nervio.widgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -110,6 +114,10 @@
 		86006E392FB3B1F600714B37 /* NervioWatch Watch AppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "NervioWatch Watch AppUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		86006E572FB3B42B00714B37 /* NervioWatch ComplicationsExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "NervioWatch ComplicationsExtension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 		86006E6E2FB3B57D00714B37 /* NervioWatch ComplicationsExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "NervioWatch ComplicationsExtension.entitlements"; sourceTree = "<group>"; };
+		86AF6A932FDAE76900CD01D7 /* NervioLiveActivityManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NervioLiveActivityManager.swift; sourceTree = "<group>"; };
+		86AF6A942FDB34A300CD01D7 /* NervioProManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NervioProManager.swift; sourceTree = "<group>"; };
+		86AF6A952FDB34B900CD01D7 /* ProPaywallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProPaywallView.swift; sourceTree = "<group>"; };
+		86AF6A9A2FDB383300CD01D7 /* Nervio.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = Nervio.storekit; sourceTree = "<group>"; };
 		86C7BD4E2FB26AA80027212B /* ro */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ro; path = Localizable.strings; sourceTree = "<group>"; };
 		86C7BD502FB26AEB0027212B /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = Localizable.strings; sourceTree = "<group>"; };
 		86C7BD522FB26B310027212B /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = Localizable.strings; sourceTree = "<group>"; };
@@ -331,6 +339,7 @@
 		86E456052FB236C800040516 = {
 			isa = PBXGroup;
 			children = (
+				86AF6A9A2FDB383300CD01D7 /* Nervio.storekit */,
 				86006E6E2FB3B57D00714B37 /* NervioWatch ComplicationsExtension.entitlements */,
 				86FE430D2FB30C250089F00F /* nervio.widgetExtension.entitlements */,
 				86E456102FB236C800040516 /* Nervio — Recovery Signals */,
@@ -377,6 +386,8 @@
 		86E456382FB2371A00040516 /* App */ = {
 			isa = PBXGroup;
 			children = (
+				86AF6A932FDAE76900CD01D7 /* NervioLiveActivityManager.swift */,
+				86AF6A942FDB34A300CD01D7 /* NervioProManager.swift */,
 			);
 			path = App;
 			sourceTree = "<group>";
@@ -405,6 +416,7 @@
 		86E4563C2FB2371A00040516 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				86AF6A952FDB34B900CD01D7 /* ProPaywallView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -719,6 +731,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				86AF6A9B2FDB383300CD01D7 /* Nervio.storekit in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -778,6 +791,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				86AF6A962FDB36AA00CD01D7 /* NervioProManager.swift in Sources */,
+				86AF6A982FDB36D700CD01D7 /* ProPaywallView.swift in Sources */,
+				86AF6A972FDB36C100CD01D7 /* NervioLiveActivityManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -895,7 +911,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = "NervioWatch Watch App/NervioWatch Watch App.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 9;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 62QUMB3PNM;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -909,7 +925,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.3;
+				MARKETING_VERSION = 2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.florinsima.Nervio---Recovery-Signals.watchkitapp";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
@@ -933,7 +949,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = "NervioWatch Watch App/NervioWatch Watch App.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 9;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 62QUMB3PNM;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -947,7 +963,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.3;
+				MARKETING_VERSION = 2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.florinsima.Nervio---Recovery-Signals.watchkitapp";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
@@ -1060,7 +1076,7 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_ENTITLEMENTS = "NervioWatch ComplicationsExtension.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 9;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 62QUMB3PNM;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "NervioWatch Complications/Info.plist";
@@ -1072,7 +1088,7 @@
 					"@executable_path/../../Frameworks",
 					"@executable_path/../../../../Frameworks",
 				);
-				MARKETING_VERSION = 1.3;
+				MARKETING_VERSION = 2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.florinsima.Nervio---Recovery-Signals.watchkitapp.NervioWatch-Complications";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
@@ -1094,7 +1110,7 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_ENTITLEMENTS = "NervioWatch ComplicationsExtension.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 9;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 62QUMB3PNM;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "NervioWatch Complications/Info.plist";
@@ -1106,7 +1122,7 @@
 					"@executable_path/../../Frameworks",
 					"@executable_path/../../../../Frameworks",
 				);
-				MARKETING_VERSION = 1.3;
+				MARKETING_VERSION = 2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.florinsima.Nervio---Recovery-Signals.watchkitapp.NervioWatch-Complications";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
@@ -1128,7 +1144,7 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_ENTITLEMENTS = nervio.widgetExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 9;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 62QUMB3PNM;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = nervio.widget/Info.plist;
@@ -1140,7 +1156,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.3;
+				MARKETING_VERSION = 2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.florinsima.Nervio---Recovery-Signals.nervio-widget";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -1160,7 +1176,7 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_ENTITLEMENTS = nervio.widgetExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 9;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 62QUMB3PNM;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = nervio.widget/Info.plist;
@@ -1172,7 +1188,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.3;
+				MARKETING_VERSION = 2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.florinsima.Nervio---Recovery-Signals.nervio-widget";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -1319,15 +1335,16 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = "Nervio — Recovery Signals/Nervio — Recovery Signals.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 9;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 62QUMB3PNM;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "";
+				INFOPLIST_FILE = "Nervio---Recovery-Signals-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = Nervio;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.healthcare-fitness";
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "Nervio reads ​Apple ​Health data locally to estimate recovery signals and physiological load trends.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Nervio writes selected wellness summaries to Apple Health only when you explicitly choose to do so.";
+				INFOPLIST_KEY_NSSupportsLiveActivities = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -1338,7 +1355,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.3;
+				MARKETING_VERSION = 2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.florinsima.Nervio---Recovery-Signals";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = NO;
@@ -1359,15 +1376,16 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = "Nervio — Recovery Signals/Nervio — Recovery Signals.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 9;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 62QUMB3PNM;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "";
+				INFOPLIST_FILE = "Nervio---Recovery-Signals-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = Nervio;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.healthcare-fitness";
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "Nervio reads ​Apple ​Health data locally to estimate recovery signals and physiological load trends.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Nervio writes selected wellness summaries to Apple Health only when you explicitly choose to do so.";
+				INFOPLIST_KEY_NSSupportsLiveActivities = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -1378,7 +1396,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.3;
+				MARKETING_VERSION = 2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.florinsima.Nervio---Recovery-Signals";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = NO;
