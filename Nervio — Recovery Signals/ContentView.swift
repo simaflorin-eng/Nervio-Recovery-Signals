@@ -710,6 +710,10 @@ final class NervioAppModel {
         WidgetCenter.shared.reloadTimelines(ofKind: "nervio_signal_widget_v2")
         WidgetCenter.shared.reloadTimelines(ofKind: "nervio_signal_widget")
         WidgetCenter.shared.reloadTimelines(ofKind: "nervio_widget")
+        if NervioProManager.shared.isPro,
+           UserDefaults.standard.bool(forKey: "liveActivitiesEnabled") {
+            NervioLiveActivityManager.shared.startOrUpdate(with: snapshot)
+        }
     }
 
     private func relocalizedErrorMessage(_ message: String?) -> String? {
@@ -1931,10 +1935,7 @@ struct AppSettingsView: View {
 
     var body: some View {
         NavigationStack {
-            ZStack {
-                NervioBackground()
-
-                List {
+            List {
                     // MARK: Pro section
                     if NervioProManager.shared.isPro {
                         Section {
@@ -2082,7 +2083,7 @@ struct AppSettingsView: View {
                     }
                 }
                 .scrollContentBackground(.hidden)
-            }
+                .background { NervioBackground() }
             .navigationTitle(L10n.string("Settings"))
             .sheet(isPresented: $showingPaywall) {
                 ProPaywallView()
@@ -2124,10 +2125,7 @@ struct DashboardView: View {
 
     var body: some View {
         NavigationStack {
-            ZStack {
-                NervioBackground(tint: recoveryTint)
-
-                ScrollView {
+            ScrollView {
                     VStack(alignment: .leading, spacing: 20) {
                         ScoreHeader(score: dashboardState.score)
                         StressScoreCard(stressScore: dashboardState.stressScore)
@@ -2143,8 +2141,8 @@ struct DashboardView: View {
                     }
                     .padding(.horizontal, NervioVisuals.horizontalPadding)
                     .padding(.vertical, 20)
-                }
             }
+            .background { NervioBackground(tint: recoveryTint) }
             .navigationTitle(L10n.string("Today"))
             .toolbar {
                 if !NervioProManager.shared.isPro {
@@ -2674,26 +2672,23 @@ struct TrendsView: View {
     var body: some View {
         let recentHistory = Array(dashboardState.history.suffix(28))
         NavigationStack {
-            ZStack {
-                NervioBackground()
-
-                ScrollView {
-                    VStack(alignment: .leading, spacing: 18) {
-                        RecoveryCalendarView(scoreHistory: dashboardState.scoreHistory)
-                        RecoveryScoreChart(scoreHistory: Array(dashboardState.scoreHistory.suffix(28)))
-                        TrendChart(title: L10n.string("HRV"), unit: L10n.string("ms"), color: .teal, points: recentHistory.compactMap { summary in summary.hrvMilliseconds.map { TrendPoint(date: summary.date, value: $0) } })
-                        TrendChart(title: L10n.string("Resting heart rate"), unit: L10n.string("bpm"), color: .pink, points: recentHistory.compactMap { summary in summary.restingHeartRate.map { TrendPoint(date: summary.date, value: $0) } })
-                        TrendChart(title: L10n.string("Sleep"), unit: L10n.string("hours"), color: .indigo, points: recentHistory.compactMap { summary in summary.sleepHours.map { TrendPoint(date: summary.date, value: $0) } })
-                        TrendChart(title: L10n.string("Steps"), unit: L10n.string("steps"), color: .green, points: recentHistory.compactMap { summary in summary.stepCount.map { TrendPoint(date: summary.date, value: $0) } })
-                        Text(L10n.string("Trends compare available Apple Health samples over time. Missing points usually mean no readable data was available for that day."))
-                            .font(.footnote)
-                            .foregroundStyle(.secondary)
-                            .nervioCard(tint: .indigo, padding: 14)
-                    }
-                    .padding(.horizontal, NervioVisuals.horizontalPadding)
-                    .padding(.vertical, 16)
+            ScrollView {
+                VStack(alignment: .leading, spacing: 18) {
+                    RecoveryCalendarView(scoreHistory: dashboardState.scoreHistory)
+                    RecoveryScoreChart(scoreHistory: Array(dashboardState.scoreHistory.suffix(28)))
+                    TrendChart(title: L10n.string("HRV"), unit: L10n.string("ms"), color: .teal, points: recentHistory.compactMap { summary in summary.hrvMilliseconds.map { TrendPoint(date: summary.date, value: $0) } })
+                    TrendChart(title: L10n.string("Resting heart rate"), unit: L10n.string("bpm"), color: .pink, points: recentHistory.compactMap { summary in summary.restingHeartRate.map { TrendPoint(date: summary.date, value: $0) } })
+                    TrendChart(title: L10n.string("Sleep"), unit: L10n.string("hours"), color: .indigo, points: recentHistory.compactMap { summary in summary.sleepHours.map { TrendPoint(date: summary.date, value: $0) } })
+                    TrendChart(title: L10n.string("Steps"), unit: L10n.string("steps"), color: .green, points: recentHistory.compactMap { summary in summary.stepCount.map { TrendPoint(date: summary.date, value: $0) } })
+                    Text(L10n.string("Trends compare available Apple Health samples over time. Missing points usually mean no readable data was available for that day."))
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                        .nervioCard(tint: .indigo, padding: 14)
                 }
+                .padding(.horizontal, NervioVisuals.horizontalPadding)
+                .padding(.vertical, 16)
             }
+            .background { NervioBackground() }
             .navigationTitle(L10n.string("Trends"))
         }
     }
@@ -2896,49 +2891,46 @@ struct CompareView: View {
 
     var body: some View {
         NavigationStack {
-            ZStack {
-                NervioBackground()
-
-                ScrollView {
-                    VStack(alignment: .leading, spacing: 16) {
-                        Picker("Compare Scope", selection: $scope) {
-                            ForEach(CompareScope.allCases) { item in
-                                Text(item.title).tag(item)
-                            }
-                        }
-                        .pickerStyle(.segmented)
-
-                        if isDetectingYears {
-                            ProgressView()
-                                .frame(maxWidth: .infinity, alignment: .center)
-                                .padding(.vertical, 8)
-                        } else if availableYears.count >= 2 {
-                            yearPickerRow(label: L10n.string("Compare"), selected: $yearA, excluding: yearB)
-                            yearPickerRow(label: L10n.string("with"), selected: $yearB, excluding: yearA)
-                        }
-
-                        Text(scope.subtitle)
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
-
-                        if isLoadingCompare {
-                            ProgressView()
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .nervioCard(tint: .teal, padding: 14)
-                        } else if let comparison {
-                            compareCard(comparison: comparison)
-                        } else if !isDetectingYears {
-                            Text(L10n.string("Not enough historical data yet for year-over-year comparison."))
-                                .font(.subheadline)
-                                .foregroundStyle(.secondary)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .nervioCard(tint: .orange, padding: 14)
+            ScrollView {
+                VStack(alignment: .leading, spacing: 16) {
+                    Picker("Compare Scope", selection: $scope) {
+                        ForEach(CompareScope.allCases) { item in
+                            Text(item.title).tag(item)
                         }
                     }
-                    .padding(.horizontal, NervioVisuals.horizontalPadding)
-                    .padding(.vertical, 16)
+                    .pickerStyle(.segmented)
+
+                    if isDetectingYears {
+                        ProgressView()
+                            .frame(maxWidth: .infinity, alignment: .center)
+                            .padding(.vertical, 8)
+                    } else if availableYears.count >= 2 {
+                        yearPickerRow(label: L10n.string("Compare"), selected: $yearA, excluding: yearB)
+                        yearPickerRow(label: L10n.string("with"), selected: $yearB, excluding: yearA)
+                    }
+
+                    Text(scope.subtitle)
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+
+                    if isLoadingCompare {
+                        ProgressView()
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .nervioCard(tint: .teal, padding: 14)
+                    } else if let comparison {
+                        compareCard(comparison: comparison)
+                    } else if !isDetectingYears {
+                        Text(L10n.string("Not enough historical data yet for year-over-year comparison."))
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .nervioCard(tint: .orange, padding: 14)
+                    }
                 }
+                .padding(.horizontal, NervioVisuals.horizontalPadding)
+                .padding(.vertical, 16)
             }
+            .background { NervioBackground() }
             .navigationTitle(L10n.string("Compare"))
             .navigationBarTitleDisplayMode(.inline)
             .task {

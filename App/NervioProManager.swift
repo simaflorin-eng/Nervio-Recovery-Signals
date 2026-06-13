@@ -15,7 +15,7 @@ final class NervioProManager {
         product?.displayPrice ?? "$3.99"
     }
 
-    private let productID = "com.florinsima.nervio.pro"
+    private let productID = "com.florinsima.nervio.unlock"
     private let appGroupID = "group.com.florinsima.Nervio-Recovery-Signals"
     private let proKey = "nervio.isPro"
 

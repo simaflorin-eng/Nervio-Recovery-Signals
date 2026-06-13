@@ -14,7 +14,22 @@
 
   ],
   "products" : [
-
+    {
+      "displayPrice" : "3.99",
+      "familyShareable" : false,
+      "groupID" : "",
+      "internalID" : "A1B2C3D4",
+      "localizations" : [
+        {
+          "description" : "Home Screen Widgets, Live Activity, and all future Pro features. One-time purchase.",
+          "displayName" : "Nervio Pro",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "com.florinsima.nervio.unlock",
+      "referenceName" : "Nervio Pro",
+      "type" : "NonConsumable"
+    }
   ],
   "settings" : {
     "_applicationInternalID" : "6768915068",

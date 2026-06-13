@@ -14,13 +14,17 @@ struct NervioActivityAttributes: ActivityAttributes {
 @MainActor
 final class NervioLiveActivityManager {
     static let shared = NervioLiveActivityManager()
-    private var currentActivity: Activity<NervioActivityAttributes>?
 
-    private init() {}
+    private init() {
+        // Restore any activity that survived an app restart.
+        currentActivity = Activity<NervioActivityAttributes>.activities.first
+    }
 
     var areActivitiesEnabled: Bool {
         ActivityAuthorizationInfo().areActivitiesEnabled
     }
+
+    private var currentActivity: Activity<NervioActivityAttributes>?
 
     func startOrUpdate(with snapshot: NervioWidgetSnapshot) {
         guard areActivitiesEnabled else { return }
@@ -30,7 +34,8 @@ final class NervioLiveActivityManager {
             summary: snapshot.summary,
             updatedAt: snapshot.updatedAt
         )
-        if let activity = currentActivity {
+        if let activity = currentActivity ?? Activity<NervioActivityAttributes>.activities.first {
+            currentActivity = activity
             Task {
                 let content = ActivityContent(
                     state: state,
@@ -45,7 +50,6 @@ final class NervioLiveActivityManager {
 
     func startNew(state: NervioActivityAttributes.ContentState? = nil) {
         guard areActivitiesEnabled else { return }
-        endAll()
         let defaultState = state ?? NervioActivityAttributes.ContentState(
             recoveryValue: nil, stressValue: nil, summary: "", updatedAt: .now
         )
@@ -53,11 +57,17 @@ final class NervioLiveActivityManager {
             state: defaultState,
             staleDate: Calendar.current.date(byAdding: .hour, value: 4, to: .now)
         )
-        currentActivity = try? Activity<NervioActivityAttributes>.request(
-            attributes: NervioActivityAttributes(),
-            content: content,
-            pushType: nil
-        )
+        Task {
+            // End existing activities first, then start fresh.
+            for activity in Activity<NervioActivityAttributes>.activities {
+                await activity.end(nil, dismissalPolicy: .immediate)
+            }
+            currentActivity = try? Activity<NervioActivityAttributes>.request(
+                attributes: NervioActivityAttributes(),
+                content: content,
+                pushType: nil
+            )
+        }
     }
 
     func endAll() {
