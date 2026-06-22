@@ -1824,6 +1824,8 @@ struct MainTabView: View {
     }
 }
 
+private let nervioBottomBarScrollClearance: CGFloat = 96
+
 private struct NervioTabBar: View {
     @Binding var selectedTab: Int
     @Namespace private var glassNamespace
@@ -2083,6 +2085,9 @@ struct AppSettingsView: View {
                     }
                 }
                 .scrollContentBackground(.hidden)
+                .safeAreaInset(edge: .bottom, spacing: 0) {
+                    Color.clear.frame(height: nervioBottomBarScrollClearance)
+                }
                 .background { NervioBackground() }
             .navigationTitle(L10n.string("Settings"))
             .sheet(isPresented: $showingPaywall) {
@@ -2140,7 +2145,8 @@ struct DashboardView: View {
                         ContributorsView(contributors: dashboardState.score.contributors)
                     }
                     .padding(.horizontal, NervioVisuals.horizontalPadding)
-                    .padding(.vertical, 20)
+                    .padding(.top, 20)
+                    .padding(.bottom, nervioBottomBarScrollClearance)
             }
             .background { NervioBackground(tint: recoveryTint) }
             .navigationTitle(L10n.string("Today"))
@@ -2249,7 +2255,10 @@ private struct ScoreHeader: View {
         .frame(maxWidth: .infinity)
         .nervioCard(tint: recoveryTint, padding: 24)
         .onAppear {
-            ringProgress = CGFloat(score.value ?? 0) / 100
+            ringProgress = scoreRingProgress(for: score.value)
+        }
+        .onChange(of: score.value) { _, newValue in
+            ringProgress = scoreRingProgress(for: newValue)
         }
     }
 
@@ -2303,7 +2312,10 @@ private struct StressScoreCard: View {
         }
         .nervioCard(tint: stressTint, padding: 16)
         .onAppear {
-            ringProgress = CGFloat(stressScore.value ?? 0) / 100
+            ringProgress = scoreRingProgress(for: stressScore.value)
+        }
+        .onChange(of: stressScore.value) { _, newValue in
+            ringProgress = scoreRingProgress(for: newValue)
         }
     }
 
@@ -2314,6 +2326,11 @@ private struct StressScoreCard: View {
     private var stressGradientColors: [Color] {
         semanticStressColors(for: stressScore.value)
     }
+}
+
+private func scoreRingProgress(for value: Int?) -> CGFloat {
+    let boundedValue = min(100, max(0, value ?? 0))
+    return CGFloat(boundedValue) / 100
 }
 
 private func semanticRecoveryColors(for value: Int?) -> [Color] {
@@ -2686,7 +2703,8 @@ struct TrendsView: View {
                         .nervioCard(tint: .indigo, padding: 14)
                 }
                 .padding(.horizontal, NervioVisuals.horizontalPadding)
-                .padding(.vertical, 16)
+                .padding(.top, 16)
+                .padding(.bottom, nervioBottomBarScrollClearance)
             }
             .background { NervioBackground() }
             .navigationTitle(L10n.string("Trends"))
@@ -2928,7 +2946,8 @@ struct CompareView: View {
                     }
                 }
                 .padding(.horizontal, NervioVisuals.horizontalPadding)
-                .padding(.vertical, 16)
+                .padding(.top, 16)
+                .padding(.bottom, nervioBottomBarScrollClearance)
             }
             .background { NervioBackground() }
             .navigationTitle(L10n.string("Compare"))
@@ -3380,6 +3399,9 @@ struct PrivacySettingsView: View {
                     }
                 }
                 .scrollContentBackground(.hidden)
+                .safeAreaInset(edge: .bottom, spacing: 0) {
+                    Color.clear.frame(height: nervioBottomBarScrollClearance)
+                }
             }
             .navigationTitle(L10n.string("Privacy"))
         }
