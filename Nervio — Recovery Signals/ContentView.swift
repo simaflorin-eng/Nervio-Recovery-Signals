@@ -856,9 +856,43 @@ final class HealthKitManager {
         return total > 0 ? total : nil
     }
 
+    fileprivate func fetchCompareMetricTotal(_ metric: CompareMetric, startDate: Date, endDate: Date) async -> Double? {
+        guard isHealthDataAvailable else { return nil }
+
+        switch metric.kind {
+        case .steps:
+            return await fetchAppleWatchStepTotal(startDate: startDate, endDate: endDate)
+
+        case let .quantity(identifier, unit):
+            let samples = await safeQuantitySamples(identifier: identifier, startDate: startDate, endDate: endDate)
+            let total = samples.reduce(0.0) { partial, sample in
+                partial + sample.quantity.doubleValue(for: unit)
+            }
+            return total > 0 ? total : nil
+
+        case let .workout(activityType):
+            let workouts = await safeWorkoutSamples(startDate: startDate, endDate: endDate)
+            let filteredWorkouts = activityType.map { type in
+                workouts.filter { $0.workoutActivityType == type }
+            } ?? workouts
+            let seconds = filteredWorkouts.reduce(0.0) { partial, workout in
+                partial + workout.endDate.timeIntervalSince(workout.startDate)
+            }
+            return seconds > 0 ? seconds / 60 : nil
+        }
+    }
+
     private static var readTypes: Set<HKObjectType> {
         var types = Set<HKObjectType>()
-        [HKQuantityTypeIdentifier.heartRateVariabilitySDNN, .restingHeartRate, .stepCount, .activeEnergyBurned].forEach { identifier in
+        [
+            HKQuantityTypeIdentifier.heartRateVariabilitySDNN,
+            .restingHeartRate,
+            .stepCount,
+            .activeEnergyBurned,
+            .flightsClimbed,
+            .distanceWalkingRunning,
+            .distanceCycling
+        ].forEach { identifier in
             if let type = HKObjectType.quantityType(forIdentifier: identifier) { types.insert(type) }
         }
         types.insert(HKObjectType.categoryType(forIdentifier: .sleepAnalysis)!)
@@ -1895,7 +1929,10 @@ private struct NervioTabBar: View {
                 if selectedTab == item.index {
                     Text(L10n.string(item.label))
                         .font(.subheadline.weight(.semibold))
-                        .fixedSize()
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.78)
+                        .allowsTightening(true)
+                        .fixedSize(horizontal: false, vertical: true)
                         .transition(.asymmetric(
                             insertion: .opacity.combined(with: .scale(scale: 0.8, anchor: .leading)),
                             removal: .opacity.combined(with: .scale(scale: 0.8, anchor: .leading))
@@ -1903,7 +1940,7 @@ private struct NervioTabBar: View {
                 }
             }
             .padding(.vertical, 14)
-            .padding(.horizontal, selectedTab == item.index ? 20 : 16)
+            .padding(.horizontal, selectedTab == item.index ? 16 : 14)
             .contentShape(Capsule())
         }
         .buttonStyle(.plain)
@@ -2899,11 +2936,12 @@ struct CompareView: View {
     let dashboardState: DashboardState
     let healthKitManager: HealthKitManager
     private let calendar = Calendar.current
+    @Environment(\.displayScale) private var displayScale
     @State private var scope: CompareScope = .month
     @State private var availableYears: [Int] = []
     @State private var yearA: Int = 0
     @State private var yearB: Int = 0
-    @State private var comparison: StepPeriodComparison?
+    @State private var comparisons: [MetricPeriodComparison] = []
     @State private var isLoadingCompare = false
     @State private var isDetectingYears = true
 
@@ -2923,8 +2961,10 @@ struct CompareView: View {
                             .frame(maxWidth: .infinity, alignment: .center)
                             .padding(.vertical, 8)
                     } else if availableYears.count >= 2 {
-                        yearPickerRow(label: L10n.string("Compare"), selected: $yearA, excluding: yearB)
-                        yearPickerRow(label: L10n.string("with"), selected: $yearB, excluding: yearA)
+                        HStack(spacing: 12) {
+                            yearMenu(label: L10n.string("Compare"), selected: $yearA, excluding: yearB)
+                            yearMenu(label: L10n.string("with"), selected: $yearB, excluding: yearA)
+                        }
                     }
 
                     Text(scope.subtitle)
@@ -2935,8 +2975,10 @@ struct CompareView: View {
                         ProgressView()
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .nervioCard(tint: .teal, padding: 14)
-                    } else if let comparison {
-                        compareCard(comparison: comparison)
+                    } else if !comparisons.isEmpty {
+                        ForEach(comparisons) { comparison in
+                            compareCard(comparison: comparison)
+                        }
                     } else if !isDetectingYears {
                         Text(L10n.string("Not enough historical data yet for year-over-year comparison."))
                             .font(.subheadline)
@@ -2952,6 +2994,20 @@ struct CompareView: View {
             .background { NervioBackground() }
             .navigationTitle(L10n.string("Compare"))
             .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                if !comparisons.isEmpty {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        let image = shareImage
+                        ShareLink(
+                            item: image,
+                            preview: SharePreview("Nervio Compare", image: image)
+                        ) {
+                            Image(systemName: "square.and.arrow.up")
+                        }
+                        .accessibilityLabel(L10n.string("Share"))
+                    }
+                }
+            }
             .task {
                 guard availableYears.isEmpty else { return }
                 await detectAvailableYears()
@@ -2963,41 +3019,61 @@ struct CompareView: View {
         }
     }
 
-    private func yearPickerRow(label: String, selected: Binding<Int>, excluding: Int) -> some View {
-        HStack(spacing: 10) {
-            Text(label)
-                .font(.subheadline.weight(.medium))
-                .foregroundStyle(.secondary)
-                .frame(width: 58, alignment: .leading)
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 8) {
-                    ForEach(availableYears.filter { $0 != excluding }, id: \.self) { year in
-                        Button {
-                            selected.wrappedValue = year
-                        } label: {
-                            Text(String(year))
-                                .font(.subheadline.weight(.semibold))
-                                .padding(.horizontal, 16)
-                                .padding(.vertical, 8)
-                                .background(
-                                    selected.wrappedValue == year ? Color.teal : Color.primary.opacity(0.08),
-                                    in: RoundedRectangle(cornerRadius: 10, style: .continuous)
-                                )
-                                .foregroundStyle(selected.wrappedValue == year ? Color.white : Color.primary)
-                        }
-                        .buttonStyle(.plain)
-                        .animation(.easeInOut(duration: 0.15), value: selected.wrappedValue)
-                    }
-                }
-                .padding(.vertical, 2)
-            }
+    private var shareImage: Image {
+        let content = CompareShareImageView(
+            scopeTitle: scope.title,
+            subtitle: scope.subtitle,
+            yearA: yearA,
+            yearB: yearB,
+            comparisons: comparisons
+        )
+        let renderer = ImageRenderer(content: content)
+        renderer.scale = displayScale
+
+        if let uiImage = renderer.uiImage {
+            return Image(uiImage: uiImage)
         }
+
+        return Image(systemName: "chart.bar.doc.horizontal")
     }
 
-    private func compareCard(comparison: StepPeriodComparison) -> some View {
+    private func yearMenu(label: String, selected: Binding<Int>, excluding: Int) -> some View {
+        Menu {
+            ForEach(availableYears.filter { $0 != excluding }, id: \.self) { year in
+                Button(String(year)) {
+                    selected.wrappedValue = year
+                }
+            }
+        } label: {
+            VStack(alignment: .leading, spacing: 6) {
+                Text(label)
+                    .font(.caption.weight(.medium))
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
+                HStack(spacing: 8) {
+                    Text(String(selected.wrappedValue))
+                        .font(.title3.monospacedDigit().weight(.semibold))
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.8)
+                    Spacer(minLength: 4)
+                    Image(systemName: "chevron.down")
+                        .font(.caption.weight(.bold))
+                        .foregroundStyle(.secondary)
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.horizontal, 14)
+            .padding(.vertical, 12)
+            .background(Color.primary.opacity(0.08), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+            .contentShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+        }
+        .buttonStyle(.plain)
+    }
+
+    private func compareCard(comparison: MetricPeriodComparison) -> some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
-                Label(L10n.string("Steps"), systemImage: "figure.walk")
+                Label(comparison.metric.title, systemImage: comparison.metric.systemImage)
                     .font(.headline.weight(.semibold))
                 Spacer()
                 Text(comparison.percentText)
@@ -3027,7 +3103,7 @@ struct CompareView: View {
                 }
             }
         }
-        .nervioCard(tint: .green, padding: 14)
+        .nervioCard(tint: comparison.metric.color, padding: 14)
     }
 
     private func detectAvailableYears() async {
@@ -3041,7 +3117,12 @@ struct CompareView: View {
         @Sendable func has(year: Int) async -> Bool {
             guard let s = cal.date(from: DateComponents(year: year, month: 1, day: 1)),
                   let e = cal.date(byAdding: .year, value: 1, to: s) else { return false }
-            return ((await hkm.fetchAppleWatchStepTotal(startDate: s, endDate: e)) ?? 0) > 0
+            for metric in CompareMetric.allCases {
+                if ((await hkm.fetchCompareMetricTotal(metric, startDate: s, endDate: e)) ?? 0) > 0 {
+                    return true
+                }
+            }
+            return false
         }
 
         async let r0 = has(year: cur)
@@ -3066,13 +3147,19 @@ struct CompareView: View {
     }
 
     private func loadComparison() async {
-        guard yearA != 0, yearB != 0, yearA != yearB else { comparison = nil; return }
+        guard yearA != 0, yearB != 0, yearA != yearB else {
+            comparisons = []
+            return
+        }
         isLoadingCompare = true
         defer { isLoadingCompare = false }
 
         let now = Date()
         let todayStart = calendar.startOfDay(for: now)
-        guard let tomorrow = calendar.date(byAdding: .day, value: 1, to: todayStart) else { comparison = nil; return }
+        guard let tomorrow = calendar.date(byAdding: .day, value: 1, to: todayStart) else {
+            comparisons = []
+            return
+        }
         let currentYear = calendar.component(.year, from: now)
 
         let startA, endA, startB, endB: Date
@@ -3086,7 +3173,10 @@ struct CompareView: View {
                   let diffBTomorrow  = calendar.date(byAdding: .year, value: yearB - currentYear, to: tomorrow),
                   let mStartA = calendar.date(byAdding: .year, value: yearA - currentYear, to: mStartCurrent),
                   let mStartB = calendar.date(byAdding: .year, value: yearB - currentYear, to: mStartCurrent)
-            else { comparison = nil; return }
+            else {
+                comparisons = []
+                return
+            }
             (startA, endA) = (mStartA, diffATomorrow)
             (startB, endB) = (mStartB, diffBTomorrow)
 
@@ -3095,7 +3185,10 @@ struct CompareView: View {
                   let janB = calendar.date(from: DateComponents(year: yearB, month: 1, day: 1)),
                   let endATomorrow = calendar.date(byAdding: .year, value: yearA - currentYear, to: tomorrow),
                   let endBTomorrow = calendar.date(byAdding: .year, value: yearB - currentYear, to: tomorrow)
-            else { comparison = nil; return }
+            else {
+                comparisons = []
+                return
+            }
             (startA, endA) = (janA, endATomorrow)
             (startB, endB) = (janB, endBTomorrow)
 
@@ -3104,23 +3197,35 @@ struct CompareView: View {
                   let endAY  = calendar.date(byAdding: .year, value: 1, to: janA),
                   let janB   = calendar.date(from: DateComponents(year: yearB, month: 1, day: 1)),
                   let endBY  = calendar.date(byAdding: .year, value: 1, to: janB)
-            else { comparison = nil; return }
+            else {
+                comparisons = []
+                return
+            }
             (startA, endA) = (janA, endAY)
             (startB, endB) = (janB, endBY)
         }
 
-        async let fetchA = healthKitManager.fetchAppleWatchStepTotal(startDate: startA, endDate: endA)
-        async let fetchB = healthKitManager.fetchAppleWatchStepTotal(startDate: startB, endDate: endB)
-        let (stepsA, stepsB) = await (fetchA, fetchB)
+        var loadedComparisons: [MetricPeriodComparison] = []
+        for metric in CompareMetric.allCases {
+            async let fetchA = healthKitManager.fetchCompareMetricTotal(metric, startDate: startA, endDate: endA)
+            async let fetchB = healthKitManager.fetchCompareMetricTotal(metric, startDate: startB, endDate: endB)
+            let (amountA, amountB) = await (fetchA, fetchB)
 
-        guard let stepsA, let stepsB, stepsA > 0, stepsB > 0 else { comparison = nil; return }
+            guard let amountA, let amountB, amountA > 0, amountB > 0 else { continue }
 
-        comparison = StepPeriodComparison(
-            thisAmount: stepsA, previousAmount: stepsB,
-            currentStart: startA, currentEnd: endA,
-            previousStart: startB, previousEnd: endB,
-            yearA: yearA, yearB: yearB
-        )
+            loadedComparisons.append(
+                MetricPeriodComparison(
+                    metric: metric,
+                    thisAmount: amountA,
+                    previousAmount: amountB,
+                    currentStart: startA, currentEnd: endA,
+                    previousStart: startB, previousEnd: endB,
+                    yearA: yearA, yearB: yearB
+                )
+            )
+        }
+
+        comparisons = loadedComparisons
     }
 }
 
@@ -3148,7 +3253,269 @@ private enum CompareScope: String, CaseIterable, Identifiable {
     }
 }
 
-private struct StepPeriodComparison {
+private enum CompareMetric: String, CaseIterable, Identifiable, Hashable {
+    case steps
+    case flightsClimbed
+    case activeEnergy
+    case walkingRunningDistance
+    case cyclingDistance
+    case allWorkouts
+    case walkingWorkout
+    case runningWorkout
+    case cyclingWorkout
+    case footballWorkout
+    case americanFootballWorkout
+    case strengthWorkout
+    case hiitWorkout
+    case hikingWorkout
+    case swimmingWorkout
+    case yogaWorkout
+    case pilatesWorkout
+    case rowingWorkout
+    case ellipticalWorkout
+    case stairWorkout
+
+    var id: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .steps: return L10n.string("Steps")
+        case .flightsClimbed: return L10n.string("Flights climbed")
+        case .activeEnergy: return L10n.string("Active energy")
+        case .walkingRunningDistance: return L10n.string("Distance on foot")
+        case .cyclingDistance: return L10n.string("Cycling distance")
+        case .allWorkouts: return L10n.string("All workouts")
+        case .walkingWorkout: return L10n.string("Walking workouts")
+        case .runningWorkout: return L10n.string("Running workouts")
+        case .cyclingWorkout: return L10n.string("Cycling workouts")
+        case .footballWorkout: return L10n.string("Football / Soccer")
+        case .americanFootballWorkout: return L10n.string("American football")
+        case .strengthWorkout: return L10n.string("Strength training")
+        case .hiitWorkout: return L10n.string("HIIT")
+        case .hikingWorkout: return L10n.string("Hiking")
+        case .swimmingWorkout: return L10n.string("Swimming")
+        case .yogaWorkout: return L10n.string("Yoga")
+        case .pilatesWorkout: return L10n.string("Pilates")
+        case .rowingWorkout: return L10n.string("Rowing")
+        case .ellipticalWorkout: return L10n.string("Elliptical")
+        case .stairWorkout: return L10n.string("Stairs")
+        }
+    }
+
+    var summaryName: String {
+        switch self {
+        case .steps: return L10n.string("steps")
+        case .flightsClimbed: return L10n.string("flights climbed")
+        case .activeEnergy: return L10n.string("active energy")
+        case .walkingRunningDistance: return L10n.string("distance on foot")
+        case .cyclingDistance: return L10n.string("cycling distance")
+        case .allWorkouts: return L10n.string("workout time")
+        case .walkingWorkout: return L10n.string("walking workout time")
+        case .runningWorkout: return L10n.string("running workout time")
+        case .cyclingWorkout: return L10n.string("cycling workout time")
+        case .footballWorkout: return L10n.string("football / soccer workout time")
+        case .americanFootballWorkout: return L10n.string("American football workout time")
+        case .strengthWorkout: return L10n.string("strength training time")
+        case .hiitWorkout: return L10n.string("HIIT workout time")
+        case .hikingWorkout: return L10n.string("hiking time")
+        case .swimmingWorkout: return L10n.string("swimming time")
+        case .yogaWorkout: return L10n.string("yoga time")
+        case .pilatesWorkout: return L10n.string("pilates time")
+        case .rowingWorkout: return L10n.string("rowing time")
+        case .ellipticalWorkout: return L10n.string("elliptical time")
+        case .stairWorkout: return L10n.string("stairs workout time")
+        }
+    }
+
+    var systemImage: String {
+        switch self {
+        case .steps, .walkingWorkout: return "figure.walk"
+        case .flightsClimbed, .stairWorkout: return "stairs"
+        case .activeEnergy: return "flame"
+        case .walkingRunningDistance: return "figure.walk.motion"
+        case .cyclingDistance, .cyclingWorkout: return "bicycle"
+        case .allWorkouts: return "figure.run.circle"
+        case .runningWorkout: return "figure.run"
+        case .footballWorkout, .americanFootballWorkout: return "soccerball"
+        case .strengthWorkout: return "dumbbell"
+        case .hiitWorkout: return "timer"
+        case .hikingWorkout: return "figure.hiking"
+        case .swimmingWorkout: return "figure.pool.swim"
+        case .yogaWorkout, .pilatesWorkout: return "figure.mind.and.body"
+        case .rowingWorkout: return "figure.rower"
+        case .ellipticalWorkout: return "figure.elliptical"
+        }
+    }
+
+    var color: Color {
+        switch self {
+        case .steps, .walkingWorkout, .walkingRunningDistance: return .green
+        case .flightsClimbed, .stairWorkout: return .orange
+        case .activeEnergy: return .pink
+        case .cyclingDistance, .cyclingWorkout: return .cyan
+        case .allWorkouts: return .teal
+        case .runningWorkout, .hiitWorkout: return .red
+        case .footballWorkout, .americanFootballWorkout: return .mint
+        case .strengthWorkout: return .purple
+        case .hikingWorkout: return .brown
+        case .swimmingWorkout, .rowingWorkout: return .blue
+        case .yogaWorkout, .pilatesWorkout: return .indigo
+        case .ellipticalWorkout: return .yellow
+        }
+    }
+
+    var kind: CompareMetricKind {
+        switch self {
+        case .steps:
+            return .steps
+        case .flightsClimbed:
+            return .quantity(.flightsClimbed, .count())
+        case .activeEnergy:
+            return .quantity(.activeEnergyBurned, .kilocalorie())
+        case .walkingRunningDistance:
+            return .quantity(.distanceWalkingRunning, .meter())
+        case .cyclingDistance:
+            return .quantity(.distanceCycling, .meter())
+        case .allWorkouts:
+            return .workout(nil)
+        case .walkingWorkout:
+            return .workout(.walking)
+        case .runningWorkout:
+            return .workout(.running)
+        case .cyclingWorkout:
+            return .workout(.cycling)
+        case .footballWorkout:
+            return .workout(.soccer)
+        case .americanFootballWorkout:
+            return .workout(.americanFootball)
+        case .strengthWorkout:
+            return .workout(.traditionalStrengthTraining)
+        case .hiitWorkout:
+            return .workout(.highIntensityIntervalTraining)
+        case .hikingWorkout:
+            return .workout(.hiking)
+        case .swimmingWorkout:
+            return .workout(.swimming)
+        case .yogaWorkout:
+            return .workout(.yoga)
+        case .pilatesWorkout:
+            return .workout(.pilates)
+        case .rowingWorkout:
+            return .workout(.rowing)
+        case .ellipticalWorkout:
+            return .workout(.elliptical)
+        case .stairWorkout:
+            return .workout(.stairs)
+        }
+    }
+
+    func formatted(_ value: Double) -> String {
+        switch self {
+        case .steps, .flightsClimbed:
+            return Self.integerFormatter.string(from: NSNumber(value: Int(value.rounded()))) ?? "\(Int(value.rounded()))"
+        case .activeEnergy:
+            let amount = Self.integerFormatter.string(from: NSNumber(value: Int(value.rounded()))) ?? "\(Int(value.rounded()))"
+            return "\(amount) \(L10n.string("kcal"))"
+        case .walkingRunningDistance, .cyclingDistance:
+            let kilometers = value / 1000
+            return "\(String(format: "%.2f", kilometers)) \(L10n.string("km"))"
+        default:
+            return "\(Int(value.rounded())) \(L10n.string("min"))"
+        }
+    }
+
+    private static let integerFormatter: NumberFormatter = {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        return formatter
+    }()
+}
+
+private enum CompareMetricKind {
+    case steps
+    case quantity(HKQuantityTypeIdentifier, HKUnit)
+    case workout(HKWorkoutActivityType?)
+}
+
+private struct CompareShareImageView: View {
+    let scopeTitle: String
+    let subtitle: String
+    let yearA: Int
+    let yearB: Int
+    let comparisons: [MetricPeriodComparison]
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            VStack(alignment: .leading, spacing: 6) {
+                Text(L10n.string("Compare"))
+                    .font(.largeTitle.weight(.bold))
+                Text(verbatim: "\(scopeTitle) - \(String(yearA)) vs \(String(yearB))")
+                    .font(.title3.monospacedDigit().weight(.semibold))
+                Text(subtitle)
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+            }
+
+            ForEach(comparisons) { comparison in
+                CompareShareMetricCard(comparison: comparison)
+            }
+        }
+        .padding(24)
+        .frame(width: 430, alignment: .topLeading)
+        .background(Color(.systemGroupedBackground))
+    }
+}
+
+private struct CompareShareMetricCard: View {
+    let comparison: MetricPeriodComparison
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Label(comparison.metric.title, systemImage: comparison.metric.systemImage)
+                    .font(.headline.weight(.semibold))
+                Spacer()
+                Text(comparison.percentText)
+                    .font(.headline.monospacedDigit())
+                    .foregroundStyle(comparison.delta >= 0 ? Color.green : Color.orange)
+            }
+
+            Text(comparison.summaryText)
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+
+            HStack {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(comparison.currentRangeLabel)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                    Text(comparison.thisAmountText)
+                        .font(.title3.monospacedDigit().weight(.semibold))
+                }
+                Spacer()
+                VStack(alignment: .trailing, spacing: 4) {
+                    Text(comparison.previousRangeLabel)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                    Text(comparison.previousAmountText)
+                        .font(.title3.monospacedDigit().weight(.semibold))
+                }
+            }
+        }
+        .padding(14)
+        .background(
+            RoundedRectangle(cornerRadius: 18, style: .continuous)
+                .fill(Color(.secondarySystemGroupedBackground))
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 18, style: .continuous)
+                .stroke(comparison.metric.color.opacity(0.22), lineWidth: 1)
+        )
+    }
+}
+
+private struct MetricPeriodComparison: Identifiable {
+    let metric: CompareMetric
     let thisAmount: Double
     let previousAmount: Double
     let currentStart: Date
@@ -3157,6 +3524,8 @@ private struct StepPeriodComparison {
     let previousEnd: Date   // exclusive
     let yearA: Int
     let yearB: Int
+
+    var id: String { "\(metric.id)-\(yearA)-\(yearB)" }
 
     var delta: Double { thisAmount - previousAmount }
 
@@ -3171,14 +3540,16 @@ private struct StepPeriodComparison {
     }
 
     var summaryText: String {
-        let diff = formatted(abs(delta))
+        let diff = metric.formatted(abs(delta))
+        let currentYear = String(yearA)
+        let previousYear = String(yearB)
         return delta >= 0
-            ? "\(yearA) had \(diff) more steps than \(yearB) for the same period."
-            : "\(yearA) had \(diff) fewer steps than \(yearB) for the same period."
+            ? "\(currentYear) had \(diff) more \(metric.summaryName) than \(previousYear) for the same period."
+            : "\(currentYear) had \(diff) fewer \(metric.summaryName) than \(previousYear) for the same period."
     }
 
-    var thisAmountText: String    { formatted(thisAmount) }
-    var previousAmountText: String { formatted(previousAmount) }
+    var thisAmountText: String    { metric.formatted(thisAmount) }
+    var previousAmountText: String { metric.formatted(previousAmount) }
 
     var currentRangeLabel: String  { formatRange(currentStart,  currentEnd) }
     var previousRangeLabel: String { formatRange(previousStart, previousEnd) }
@@ -3209,15 +3580,6 @@ private struct StepPeriodComparison {
         }
     }
 
-    private func formatted(_ value: Double) -> String {
-        Self.stepsFormatter.string(from: NSNumber(value: Int(value.rounded()))) ?? "\(Int(value.rounded()))"
-    }
-
-    private static let stepsFormatter: NumberFormatter = {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .decimal
-        return formatter
-    }()
 }
 
 private struct TrendPoint: Identifiable {
