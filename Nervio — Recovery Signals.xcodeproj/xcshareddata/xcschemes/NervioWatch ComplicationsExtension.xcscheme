@@ -78,7 +78,6 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "86006E222FB3B1F500714B37"
             BuildableName = "NervioWatch Watch App.app"
-            BlueprintName = "NervioWatch Watch App"
             ReferencedContainer = "container:Nervio &#x2014; Recovery Signals.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -112,7 +111,6 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "86006E562FB3B42B00714B37"
             BuildableName = "NervioWatch ComplicationsExtension.appex"
-            BlueprintName = "NervioWatch ComplicationsExtension"
             ReferencedContainer = "container:Nervio &#x2014; Recovery Signals.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
